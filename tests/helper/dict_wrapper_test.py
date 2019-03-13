@@ -20,10 +20,7 @@ def test_JsonWrapper_getItem_ifExists_returnItem(WrappedDict, Expectation):
     assert WrappedDict[Expectation['key']] == Expectation['expectValue']
 
 
-
 def test_JsonWrapper_setItem(WrappedDict):
 
-    WrappedDict['key2'] = 2
-
-    assert WrappedDict['key2'] == 2
-
+    with pytest.raises(NotImplementedError):
+        WrappedDict['key2'] = 2

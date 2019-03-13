@@ -2,30 +2,34 @@
 
 class DictWrapper:
 
-    def __init__(self, dictonary):
+    def __init__(self, dictionary: dict):
 
-        self.dictonary = dictonary
+        self.dictionary = dictionary
 
 
-    def __getitem__(self, item):
+    def __getitem__(self, attributeName):
 
-        try:
-            result = self.dictonary[item]
+        value = None
 
-            if type(result) is dict:
-                result = DictWrapper(result)
+        if self.hasAttribute(attributeName):
 
-            return result
+            value = self.dictionary.get(attributeName)
 
-        except KeyError:
-            return None
+            if type(value) is dict:
+                value = DictWrapper(value)
+
+        return value
+
+
+    def hasAttribute(self, attributeName):
+
+        value = self.dictionary.get(attributeName, None)
+        return value is not None
 
 
     def __setitem__(self, key, value):
-
-        return self.dictonary.__setitem__(key, value)
+        raise NotImplementedError
 
 
     def __eq__(self, other):
-
-        return self.dictonary == other
+        return self.dictionary == other
