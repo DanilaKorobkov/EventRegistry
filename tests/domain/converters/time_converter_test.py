@@ -15,7 +15,7 @@ def test_DateTimeConverter_translateUtcToSecondsSinceEpoch():
 
 def test_DateTimeConverter_translateSecondsSinceEpochToUtc():
 
-    secondsSinceEpoch = 1552474381.6338258
+    secondsSinceEpoch = 1552474381.633826
 
     utc = DateTimeConverter.translateSecondsSinceEpochToUtc(secondsSinceEpoch)
 
