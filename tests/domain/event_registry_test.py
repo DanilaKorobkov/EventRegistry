@@ -8,8 +8,8 @@ def test_eventRegistry_handleRequest(mocker, GetRequest, SetRequest, RequestWith
 
     eventRegistry = EventRegistry()
 
-    mocker.patch.object(eventRegistry.eventReadHandler, 'handle')
-    mocker.patch.object(eventRegistry.eventWriteHandler, 'handle')
+    mocker.patch.object(eventRegistry.readRequestHandler, 'handle')
+    mocker.patch.object(eventRegistry.writeRequestHandler, 'handle')
 
     eventRegistry.handleRequest(GetRequest)
     eventRegistry.handleRequest(SetRequest)
@@ -17,6 +17,6 @@ def test_eventRegistry_handleRequest(mocker, GetRequest, SetRequest, RequestWith
     with pytest.raises(WrongRequestType):
         eventRegistry.handleRequest(RequestWithWrongType)
 
-    eventRegistry.eventReadHandler.handle.assert_called_once_with(GetRequest['data'])
-    eventRegistry.eventWriteHandler.handle.assert_called_once_with(SetRequest['data'])
+    eventRegistry.readRequestHandler.handle.assert_called_once_with(GetRequest['data'])
+    eventRegistry.writeRequestHandler.handle.assert_called_once_with(SetRequest['data'])
 

@@ -12,7 +12,9 @@ class SessionMapper(Mapper):
         dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1,'
                               '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
                               'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 WHERE s1.Id = s2.Id')
-        return self.handleDataSets(dataSets)
+
+        sessions = self.handleDataSets(dataSets)
+        return sessions
 
 
     def findInsideTimestamp(self, *, start, stop, inclusive = False):

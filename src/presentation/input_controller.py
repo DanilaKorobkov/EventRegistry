@@ -23,11 +23,11 @@ class InputController:
     async def start(self):
 
         self.socket.bind(self.url)
-        self.session = asyncio.ensure_future(self.startHandleIncomePackages(), loop=asyncio.get_event_loop())
+        self.session = asyncio.ensure_future(self.startHandleIncomePackages())
 
 
     async def stop(self):
-        asyncio.ensure_future(self.stopImpl(), loop=asyncio.get_event_loop())
+        asyncio.ensure_future(self.stopImpl())
 
 
     async def stopImpl(self):

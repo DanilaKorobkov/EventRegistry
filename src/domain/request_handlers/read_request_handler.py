@@ -1,14 +1,7 @@
 from .i_request_handler import *
-# Internal
-from src.data_source.storage_factory import StorageFactory
 
 
-class EventReadHandler(IRequestHandler):
-
-    def __init__(self):
-
-        self.storage = StorageFactory.getDatabaseStorage()
-
+class ReadRequestHandler(IRequestHandler):
 
     def handle(self, request):
 

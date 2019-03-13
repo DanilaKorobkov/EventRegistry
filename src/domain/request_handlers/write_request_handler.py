@@ -1,7 +1,7 @@
 from .i_request_handler import *
 
 
-class EventWriteHandler(IRequestHandler):
+class WriteRequestHandler(IRequestHandler):
 
     def handle(self, request):
         pass
