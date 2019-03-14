@@ -44,7 +44,7 @@ class InputController:
             requests = await self.socket.recv_multipart()
             print(requests)
             requests = self.packageTransformer.decodeMultiple(requests)
-            print(requests[0].dictonary)
+            print(requests[0].dictionary)
             replies = EventRegistry().handleRequests(requests)
             print(replies)
             replies = self.packageTransformer.encodeMultiple(replies)

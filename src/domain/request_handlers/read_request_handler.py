@@ -1,54 +1,55 @@
 from .i_request_handler import *
 # Internal
+from src.helper.dict_wrapper import DictWrapper
 from src.domain.converters.date_time_converter import DateTimeConverter
 
 
 class ReadRequestHandler(IRequestHandler):
 
-    def handle(self, request):
+    def handle(self, request: DictWrapper):
 
-        if request['what'] == 'Pipes':
+        if request.getAttribute('what') == 'Pipes':
 
             return self.handlePipesRequest(request)
 
-        if request['what'] == 'Sessions':
+        if request.getAttribute('what') == 'Sessions':
 
             return self.handleSessionsRequest(request)
 
 
-    def handlePipesRequest(self, request):
+    def handlePipesRequest(self, request: DictWrapper):
 
-        if request['interval']:
+        if request.hasAttribute('interval'):
 
-            start = self.fromMicroSecToSec(request['interval']['start'])
-            stop = self.fromMicroSecToSec(request['interval']['stop'])
+            start = self.fromMicroSecToSec(request.getAttribute('interval').getAttribute('start'))
+            stop = self.fromMicroSecToSec(request.getAttribute('interval').getAttribute('stop'))
 
             start = DateTimeConverter.translateSecondsSinceEpochToUtc(start)
             stop = DateTimeConverter.translateSecondsSinceEpochToUtc(stop)
 
-        if request['sessionsId']:
-            pipes = self.storage.findPipesForSessions(request['sessionsId'], request['includeRecords'])
+        if request.hasAttribute('sessionsId'):
+            pipes = self.storage.findPipesForSessions(request.getAttribute('sessionsId'), request.getAttribute('includeRecords'))
 
         else:
-            pipes = self.storage.findAllPipes(request['includeRecords'])
+            pipes = self.storage.findAllPipes(request.getAttribute('includeRecords'))
 
         pipes = [pipe.toDict() for pipe in pipes]
         pipes = {'pipes': pipes}
         return pipes
 
 
-    def handleSessionsRequest(self, request):
+    def handleSessionsRequest(self, request: DictWrapper):
 
-        if request['interval'] and request['includeIncompleteEntries'] is not None:
+        if request.hasAttribute('interval') and request.hasAttribute('includeIncompleteEntries'):
 
-            start = self.fromMicroSecToSec(request['interval']['start'])
-            stop = self.fromMicroSecToSec(request['interval']['stop'])
+            start = self.fromMicroSecToSec(request.getAttribute('interval').getAttribute('start'))
+            stop = self.fromMicroSecToSec(request.getAttribute('interval').getAttribute('stop'))
 
             parameters = \
                 {
                     'start': DateTimeConverter.translateSecondsSinceEpochToUtc(start),
                     'stop': DateTimeConverter.translateSecondsSinceEpochToUtc(stop),
-                    'includeIncompleteEntries': request['includeIncompleteEntries']
+                    'includeIncompleteEntries': request.getAttribute('includeIncompleteEntries')
                 }
 
             sessions = self.storage.findSessionsInsideTimestamp(parameters)

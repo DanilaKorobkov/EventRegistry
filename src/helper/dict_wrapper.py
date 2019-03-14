@@ -7,28 +7,24 @@ class DictWrapper:
         self.dictionary = dictionary
 
 
-    def __getitem__(self, attributeName):
+    def hasAttribute(self, name):
+
+        value = self.dictionary.get(name, None)
+        return value is not None
+
+
+    def getAttribute(self, name):
 
         value = None
 
-        if self.hasAttribute(attributeName):
+        if self.hasAttribute(name):
 
-            value = self.dictionary.get(attributeName)
+            value = self.dictionary.get(name)
 
             if type(value) is dict:
                 value = DictWrapper(value)
 
         return value
-
-
-    def hasAttribute(self, attributeName):
-
-        value = self.dictionary.get(attributeName, None)
-        return value is not None
-
-
-    def __setitem__(self, key, value):
-        raise NotImplementedError
 
 
     def __eq__(self, other):

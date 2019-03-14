@@ -17,6 +17,6 @@ def test_eventRegistry_handleRequest(mocker, GetRequest, SetRequest, RequestWith
     with pytest.raises(WrongRequestType):
         eventRegistry.handleRequest(RequestWithWrongType)
 
-    eventRegistry.readRequestHandler.handle.assert_called_once_with(GetRequest['data'])
-    eventRegistry.writeRequestHandler.handle.assert_called_once_with(SetRequest['data'])
+    eventRegistry.readRequestHandler.handle.assert_called_once_with(GetRequest.getAttribute('data'))
+    eventRegistry.writeRequestHandler.handle.assert_called_once_with(SetRequest.getAttribute('data'))
 

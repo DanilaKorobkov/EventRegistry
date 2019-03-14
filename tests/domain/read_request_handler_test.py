@@ -58,7 +58,7 @@ def test_ReadRequestHandler_handlePipesRequest_whenSessionsId_empty(StorageMock,
 
     eventReadHandler.handlePipesRequest(GetAllPipesRequest)
 
-    StorageMock.findAllPipes.assert_called_once_with(GetAllPipesRequest['includeRecords'])
+    StorageMock.findAllPipes.assert_called_once_with(GetAllPipesRequest.getAttribute('includeRecords'))
 
 
 def test_ReadRequestHandler_handlePipesRequest_whenSessionsId_notEmpty(StorageMock, GetPipesForSessionsRequestWithoutRecords):
@@ -69,7 +69,8 @@ def test_ReadRequestHandler_handlePipesRequest_whenSessionsId_notEmpty(StorageMo
 
     eventReadHandler.handlePipesRequest(request)
 
-    StorageMock.findPipesForSessions.assert_called_once_with(request['sessionsId'], request['includeRecords'])
+    StorageMock.findPipesForSessions.assert_called_once_with(request.getAttribute('sessionsId'),
+                                                             request.getAttribute('includeRecords'))
 
 
 def test_ReadRequestHandler_handleSessionsRequest_whenTimestampOrIncludeIncompleteEntries_empty(StorageMock, GetAllSessionsRequest):
@@ -91,8 +92,8 @@ def test_ReadRequestHandler_handleSessionsRequest_whenTimestampAndIncludeIncompl
 
     parameters = \
         {
-            'start': DateTimeConverter.translateSecondsSinceEpochToUtc(request['interval']['start'] / 1e6),
-            'stop': DateTimeConverter.translateSecondsSinceEpochToUtc(request['interval']['stop'] / 1e6),
-            'includeIncompleteEntries': request['includeIncompleteEntries']
+            'start': DateTimeConverter.translateSecondsSinceEpochToUtc(request.getAttribute('interval').getAttribute('start') / 1e6),
+            'stop': DateTimeConverter.translateSecondsSinceEpochToUtc(request.getAttribute('interval').getAttribute('stop') / 1e6),
+            'includeIncompleteEntries': request.getAttribute('includeIncompleteEntries')
         }
     StorageMock.findSessionsInsideTimestamp.assert_called_once_with(parameters)

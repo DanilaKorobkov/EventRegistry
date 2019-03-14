@@ -1,4 +1,3 @@
-# Internal
 from src.helper.dict_wrapper import DictWrapper
 # Python
 import pytest
@@ -15,12 +14,12 @@ def Expectation(request):
     return request.param
 
 
-def test_JsonWrapper_getItem_ifExists_returnItem(WrappedDict, Expectation):
+def test_DictWrapper_hasAttribute_ifExists_returnTrueElseFalse(WrappedDict):
 
-    assert WrappedDict[Expectation['key']] == Expectation['expectValue']
+    assert WrappedDict.hasAttribute('key1') is True
+    assert WrappedDict.hasAttribute('key3') is False
 
 
-def test_JsonWrapper_setItem(WrappedDict):
+def test_DictWrapper_getItem_ifExists_returnItem(WrappedDict, Expectation):
 
-    with pytest.raises(NotImplementedError):
-        WrappedDict['key2'] = 2
+    assert WrappedDict.getAttribute(Expectation['key']) == Expectation['expectValue']
