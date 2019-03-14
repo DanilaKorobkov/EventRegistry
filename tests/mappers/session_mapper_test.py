@@ -30,22 +30,24 @@ def test_SessionMapper_findAll(DatabaseConnection, Sessions):
     assert sessions == Sessions
 
 
-@pytest.mark.xfail
 def test_SessionMapper_findInsideTimeStamp_InclusiveFalse(DatabaseConnection, Sessions):
 
     mapper = SessionMapper(DatabaseConnection)
 
-    sessions1 = mapper.findInsideTimestamp(start = 1, stop = 5, inclusive = False)
-    sessions2 = mapper.findInsideTimestamp(start = 0, stop = 2, inclusive = False)
+    sessions = mapper.findInsideTimestamp(start = '2019-03-13 06:23:36.386286',
+                                           stop = '2019-03-13 07:21:13.601445',
+                                           inclusive = False)
 
-    assert sessions1 == []
-    assert sessions2 == [Sessions[1]]
+    assert sessions == [Sessions[0]]
 
 
-@pytest.mark.xfail
+
 def test_SessionMapper_findInsideTimeStamp_InclusiveTrue(DatabaseConnection, Sessions):
 
     mapper = SessionMapper(DatabaseConnection)
-    sessions = mapper.findInsideTimestamp(start = 0, stop = 3, inclusive = True)
+
+    sessions = mapper.findInsideTimestamp(start = '2019-03-13 06:23:36.386286',
+                                           stop = '2019-03-13 07:21:13.601445',
+                                           inclusive = True)
 
     assert sessions == Sessions

@@ -4,7 +4,7 @@ from src.helper.dict_wrapper import DictWrapper
 import pytest
 
 
-@pytest.fixture(scope = 'session')
+@pytest.fixture(scope = 'module')
 def WrappedDict():
 
     return DictWrapper({'key1': 0, 'key2': {'value': 0}})

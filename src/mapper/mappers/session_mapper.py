@@ -17,23 +17,55 @@ class SessionMapper(Mapper):
         return sessions
 
 
+    def filterSessions(self, sessions: iter, start, stop, inclusive):
+
+        result = []
+
+        start = DateTimeConverter.translateUtcToSecondsSinceEpoch(start)
+        stop = DateTimeConverter.translateUtcToSecondsSinceEpoch(stop)
+
+        for session in sessions:
+
+            sessionStart = DateTimeConverter.translateUtcToSecondsSinceEpoch(session.startUtcTime)
+            sessionStop = DateTimeConverter.translateUtcToSecondsSinceEpoch(session.stopUtcTime)
+
+            if inclusive:
+
+                if (sessionStart >= start and sessionStart <= stop) or (sessionStop >= start and sessionStop <= stop):
+                    result.append(session)
+
+            else:
+                if sessionStart >= start and sessionStop <= stop:
+
+                    result.append(session)
+
+
+        return result
+
+
+
+
     def findInsideTimestamp(self, *, start, stop, inclusive = False):
 
-        if not inclusive:
+        sessions = self.findAll()
+        sessions = self.filterSessions(sessions, start, stop, inclusive)
+        return sessions
 
-            dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1,'
-                              '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
-                              'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 '
-                              'WHERE s1.Id = s2.Id AND s2.Timestamp >= ? AND s2.EndSession <= ?', (start, stop))
-        else:
-
-            dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1, '
-                              '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
-                              'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 '
-                              'WHERE s1.Id = s2.Id AND ((? BETWEEN s2.Timestamp AND s2.EndSession) '
-                              'OR (? BETWEEN s2.Timestamp AND s2.EndSession))', (start, stop))
-
-        return self.handleDataSets(dataSets)
+        # if not inclusive:
+        #
+        #     dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1,'
+        #                       '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
+        #                       'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 '
+        #                       'WHERE s1.Id = s2.Id AND s2.Timestamp >= ? AND s2.EndSession <= ?', (start, stop))
+        # else:
+        #
+        #     dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1, '
+        #                       '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
+        #                       'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 '
+        #                       'WHERE s1.Id = s2.Id AND ((? BETWEEN s2.Timestamp AND s2.EndSession) '
+        #                       'OR (? BETWEEN s2.Timestamp AND s2.EndSession))', (start, stop))
+        #
+        # return self.handleDataSets(dataSets)
 
 
     @override

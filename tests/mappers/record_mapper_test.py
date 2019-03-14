@@ -1,53 +1,33 @@
 # Internal
-from src.domain.objects.record import Record
-from src.mapper.mappers.record_mapper import RecordMapper
+from tests.fakes.fake_mavlink_packages import *
+from src.mapper.mappers.record_mapper import RecordMapper, Record
+from src.domain.wrappers.mavlink_package_wrapper import MavlinkPackageWrapper
 # Python
 import pytest
+from unittest.mock import MagicMock
+
+@pytest.fixture
+def Records(FakeAttitudePackages):
+
+    record1 = Record()
+    record1.pipeId = 1
+    record1.utcTime = '2019-03-13 06:23:30.835208'
+    record1.package = MavlinkPackageWrapper(FakeAttitudePackages[0])
+
+    record2 = Record()
+    record2.pipeId = 1
+    record2.utcTime = '2019-03-13 06:23:31.036249'
+    record2.package = MavlinkPackageWrapper(FakeAttitudePackages[1])
+
+    return [record1, record2]
 
 
-@pytest.fixture(scope = 'session')
-def Records():
-
-    p1Records = []
-
-    for rec in [[1, 2, b'\x11\x11'],  [1, 3, b'\x22\x22'],  [1, 4, b'\x22\x22'], [1, 5, b'\x22\x22']]:
-
-        record = Record()
-        record.pipeId = rec[0]
-        record.timeStamp = rec[1]
-        record.serialData = rec[2]
-        p1Records.append(record)
-
-
-    p2Records = []
-
-    for rec in [[2, 0, b'\x22\x22'],  [2, 1, b'\x22\x22'], [2, 2, b'\x22\x22']]:
-
-        record = Record()
-        record.pipeId = rec[0]
-        record.timeStamp = rec[1]
-        record.serialData = rec[2]
-        p2Records.append(record)
-
-    return [p1Records, p2Records]
-
-
-@pytest.mark.xfail
-def test_RecordMapper_findPipesForSessions(DatabaseConnection, Records):
+@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+def test_RecordMapper_findRecordForPipe(DatabaseConnection, Records, AttitudeMetadata, FakeAttitudePackages):
 
     mapper = RecordMapper(DatabaseConnection)
+    mapper.metadata = AttitudeMetadata
 
     firstPipeRecords = mapper.findRecordsForPipe(1)
 
-    assert firstPipeRecords == Records[0]
-
-
-@pytest.mark.xfail
-def test_RecordMapper_handleDataSet(DatabaseConnection, Records):
-
-    mapper = RecordMapper(DatabaseConnection)
-
-    pipe = mapper.handleDataSet((1, 1, 2, b'\x11\x11'))
-
-    assert pipe == Records[0][0]
-
+    assert firstPipeRecords == Records

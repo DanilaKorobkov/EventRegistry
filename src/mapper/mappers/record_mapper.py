@@ -13,6 +13,8 @@ class RecordMapper(Mapper):
 
         self.metadata: str = None
 
+        self.mavlinkGenerator = MavlinkPackageGenerator()
+
         self.sessionUnit: float = None
         self.sessionTimestamp: int = None
         self.sessionStartTime: str = None
@@ -21,7 +23,7 @@ class RecordMapper(Mapper):
     def findRecordsForPipe(self, pipeId):
 
         dataSet = self.abstractFind('SELECT Timestamp, Unit, OriginTime FROM Session s, Pipe p '
-                                    'WHERE s.Id = p.SessionId AND PipeId = ?', (pipeId, ))
+                                    'WHERE s.Id = p.SessionId AND p.Id = ?', (pipeId, ))
         self.handleSessionDataSet(dataSet)
 
         dataSets = self.abstractFind('SELECT * FROM Record WHERE PipeId = ?', (pipeId, ))
@@ -49,10 +51,9 @@ class RecordMapper(Mapper):
 
         serialData = next(iterator)
 
-        generator = MavlinkPackageGenerator()
-        generator.changeDialect(self.metadata)
+        self.mavlinkGenerator.changeDialect(self.metadata)
 
-        record.package = generator.generatePackageFor(serialData)
+        record.package = self.mavlinkGenerator.generatePackageFor(serialData)
 
         return record
 
@@ -62,4 +63,6 @@ class RecordMapper(Mapper):
         dataSet = dataSet.fetchall()[0]
 
         self.sessionTimestamp, self.sessionUnit, self.sessionStartTime = dataSet
+        self.sessionStartTime = self.sessionStartTime.decode('utf-8')
+
         self.sessionStartTime = DateTimeConverter.dropUtcNanoseconds(self.sessionStartTime)

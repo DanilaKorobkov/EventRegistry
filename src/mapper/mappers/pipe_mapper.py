@@ -36,6 +36,6 @@ class PipeMapper(Mapper):
         pipe.primaryKey = next(iterator)
         pipe.sessionId = next(iterator)
         pipe.path = next(iterator).decode('utf-8').split('/')[1: -1]
-        pipe.metaData = next(iterator)
+        pipe.metaData = next(iterator).decode('utf-8')
 
         return pipe

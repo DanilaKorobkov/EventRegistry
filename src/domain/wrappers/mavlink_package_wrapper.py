@@ -21,3 +21,12 @@ class MavlinkPackageWrapper(IPackageWrapper):
             result.append(data)
 
         return result
+
+
+    def __eq__(self, other):
+
+        return all((getattr(self.package, self.package.fieldnames[i]) == getattr(other, self.package.fieldnames[i])
+                    for i in range(len(self.package.fieldnames))))
+
+
+

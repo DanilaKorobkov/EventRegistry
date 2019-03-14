@@ -33,12 +33,16 @@ class MavlinkDialectGenerator:
 
 
     @private
-    def writeToXmlAndGetPath(self, metadata: bytes):
+    def writeToXmlAndGetPath(self, metadata):
 
         xmlFullPath = os.path.join(tempfile.gettempdir(), 'tmp.xml')
 
         with open(xmlFullPath, 'w+') as xmlFile:
-            xmlFile.write(metadata.decode('utf-8'))
+
+            if type(metadata) is bytes:
+                metadata = metadata.decode('utf-8')
+
+            xmlFile.write(metadata)
 
         return xmlFullPath
 

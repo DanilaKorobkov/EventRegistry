@@ -4,13 +4,13 @@ from src.domain.mavlink.mavlink_dialect_generator import MavlinkDialectGenerator
 import pytest
 
 
-@pytest.fixture(params = [{'id': 21, 'struct': 'MAVLink_sns_message'}, {'id': 22, 'struct': 'MAVLink_attitude_message'}])
-def DataSet(request, SnsMessageMetadata, AttitudeMessageMetadata):
+@pytest.fixture(params = [{'id': 22, 'struct': 'MAVLink_attitude_message'}, {'id': 24, 'struct': 'MAVLink_pilot_message'}])
+def DataSet(request, AttitudeMetadata, PilotMetadata):
 
     data = request.param
 
-    metadata = SnsMessageMetadata if data['struct'] == 'MAVLink_sns_message' else AttitudeMessageMetadata
-    data.update({'metadata': metadata})
+    metadata = AttitudeMetadata if data['struct'] == 'MAVLink_attitude_message' else PilotMetadata
+    data.update({'metadata': metadata.encode('utf-8')})
 
     return data
 

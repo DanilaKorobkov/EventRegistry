@@ -1,6 +1,7 @@
 from src.domain.request_handlers.read_request_handler import ReadRequestHandler
 # Internal
 from src.helper.dict_wrapper import DictWrapper
+from src.domain.converters.date_time_converter import DateTimeConverter
 # Python
 import pytest
 from unittest.mock import MagicMock
@@ -23,7 +24,7 @@ def GetAllSessionsRequest():
 
 @pytest.fixture(scope = 'module')
 def GetSessionsInsideTimestampRequest():
-    return DictWrapper({'what': 'Sessions', 'timestamp': {'start': 1, 'stop': 2}, 'includeIncompleteEntries': True})
+    return DictWrapper({'what': 'Sessions', 'interval': {'start': 1, 'stop': 2}, 'includeIncompleteEntries': True})
 
 
 @pytest.fixture
@@ -90,8 +91,8 @@ def test_ReadRequestHandler_handleSessionsRequest_whenTimestampAndIncludeIncompl
 
     parameters = \
         {
-            'start': request['timestamp']['start'],
-            'stop': request['timestamp']['stop'],
+            'start': DateTimeConverter.translateSecondsSinceEpochToUtc(request['interval']['start'] / 1e6),
+            'stop': DateTimeConverter.translateSecondsSinceEpochToUtc(request['interval']['stop'] / 1e6),
             'includeIncompleteEntries': request['includeIncompleteEntries']
         }
     StorageMock.findSessionsInsideTimestamp.assert_called_once_with(parameters)

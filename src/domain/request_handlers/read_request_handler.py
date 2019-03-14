@@ -1,4 +1,6 @@
 from .i_request_handler import *
+# Internal
+from src.domain.converters.date_time_converter import DateTimeConverter
 
 
 class ReadRequestHandler(IRequestHandler):
@@ -16,6 +18,14 @@ class ReadRequestHandler(IRequestHandler):
 
     def handlePipesRequest(self, request):
 
+        if request['interval']:
+
+            start = self.fromMicroSecToSec(request['interval']['start'])
+            stop = self.fromMicroSecToSec(request['interval']['stop'])
+
+            start = DateTimeConverter.translateSecondsSinceEpochToUtc(start)
+            stop = DateTimeConverter.translateSecondsSinceEpochToUtc(stop)
+
         if request['sessionsId']:
             pipes = self.storage.findPipesForSessions(request['sessionsId'], request['includeRecords'])
 
@@ -29,12 +39,15 @@ class ReadRequestHandler(IRequestHandler):
 
     def handleSessionsRequest(self, request):
 
-        if request['timestamp'] and request['includeIncompleteEntries'] is not None:
+        if request['interval'] and request['includeIncompleteEntries'] is not None:
+
+            start = self.fromMicroSecToSec(request['interval']['start'])
+            stop = self.fromMicroSecToSec(request['interval']['stop'])
 
             parameters = \
                 {
-                    'start': request['timestamp']['start'],
-                    'stop': request['timestamp']['stop'],
+                    'start': DateTimeConverter.translateSecondsSinceEpochToUtc(start),
+                    'stop': DateTimeConverter.translateSecondsSinceEpochToUtc(stop),
                     'includeIncompleteEntries': request['includeIncompleteEntries']
                 }
 
@@ -46,3 +59,8 @@ class ReadRequestHandler(IRequestHandler):
         sessions = [session.toDict() for session in sessions]
         sessions = {'sessions': sessions}
         return sessions
+
+
+    @staticmethod
+    def fromMicroSecToSec(microseconds):
+        return microseconds / 1e6
