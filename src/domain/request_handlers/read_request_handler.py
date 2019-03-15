@@ -1,5 +1,6 @@
 from .i_request_handler import *
 # Internal
+from src.helper.interval import Unit, Interval
 from src.helper.dict_wrapper import DictWrapper
 from src.domain.converters.date_time_converter import DateTimeConverter
 
@@ -19,16 +20,21 @@ class ReadRequestHandler(IRequestHandler):
 
     def handlePipesRequest(self, request: DictWrapper):
 
-        if request.hasAttribute('interval'):
-
-            start = self.fromMicroSecToSec(request.getAttribute('interval').getAttribute('start'))
-            stop = self.fromMicroSecToSec(request.getAttribute('interval').getAttribute('stop'))
-
-            start = DateTimeConverter.translateSecondsSinceEpochToUtc(start)
-            stop = DateTimeConverter.translateSecondsSinceEpochToUtc(stop)
-
         if request.hasAttribute('sessionsId'):
-            pipes = self.storage.findPipesForSessions(request.getAttribute('sessionsId'), request.getAttribute('includeRecords'))
+
+            interval = None
+
+            if request.hasAttribute('interval'):
+
+                interval = request.getAttribute('interval')
+
+                start = interval.getAttribute('start')
+                stop = interval.getAttribute('stop')
+                unit = Unit[interval.getAttribute('unit')]
+
+                interval = Interval(start, stop, unit)
+
+            pipes = self.storage.findPipesForSessions(request.getAttribute('sessionsId'), request.getAttribute('includeRecords'), interval)
 
         else:
             pipes = self.storage.findAllPipes(request.getAttribute('includeRecords'))

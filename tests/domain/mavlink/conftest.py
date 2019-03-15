@@ -1,5 +1,8 @@
+# Internal
+from tests.fakes.fake_mavlink_packages import attitudePayload, snsPayload, pilotPayload, compassPayload
 # Python
 import pytest
+
 
 
 @pytest.fixture(scope = 'session')
@@ -122,27 +125,25 @@ def CompassMetadata():
 </mavlink>"""
 
 
-from tests.fakes.fake_mavlink_packages import attitudePayloads, snsPayloads, pilotPayloads, compassPayloads
+@pytest.fixture
+def AttitudePayload(AttitudeMetadata):
 
-@pytest.fixture(params = attitudePayloads)
-def AttitudePayload(request, AttitudeMetadata):
-
-    return {'metadata': AttitudeMetadata, 'data': request.param}
+    return {'metadata': AttitudeMetadata, 'data': attitudePayload}
 
 
-@pytest.fixture(params = snsPayloads)
-def SnsPayload(request, SnsMetadata):
+@pytest.fixture
+def SnsPayload(SnsMetadata):
 
-    return {'metadata': SnsMetadata, 'data': request.param}
-
-
-@pytest.fixture(params = pilotPayloads)
-def PilotPayload(request, PilotMetadata):
-
-    return {'metadata': PilotMetadata, 'data': request.param}
+    return {'metadata': SnsMetadata, 'data': snsPayload}
 
 
-@pytest.fixture(params = compassPayloads)
-def CompassPayload(request, CompassMetadata):
+@pytest.fixture
+def PilotPayload(PilotMetadata):
 
-    return {'metadata': CompassMetadata, 'data': request.param}
+    return {'metadata': PilotMetadata, 'data': pilotPayload}
+
+
+@pytest.fixture
+def CompassPayload(CompassMetadata):
+
+    return {'metadata': CompassMetadata, 'data': compassPayload}

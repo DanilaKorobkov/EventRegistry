@@ -29,6 +29,11 @@ class DateTimeConverter:
 
 
     @staticmethod
+    def translateMicroSecondsToSeconds(microSeconds: int):
+        return microSeconds / 1e6
+
+
+    @staticmethod
     def __convertUtcToDateTime(utcDateTime: str):
 
         return datetime.strptime(utcDateTime, '%Y-%m-%d %H:%M:%S.%f')

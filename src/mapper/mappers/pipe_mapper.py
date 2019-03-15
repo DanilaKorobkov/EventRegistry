@@ -12,7 +12,6 @@ class PipeMapper(Mapper):
         return self.handleDataSets(dataSets)
 
 
-
     def findPipesForSessions(self, sessionsId):
 
         searchRange = str(tuple(sessionsId))

@@ -7,27 +7,37 @@ import pytest
 from unittest.mock import MagicMock
 
 @pytest.fixture
-def Records(FakeAttitudePackages):
+def Records(AttitudePackage, SnsPackage, PilotPackage, CompassPackage):
 
     record1 = Record()
     record1.pipeId = 1
-    record1.utcTime = '2019-03-13 06:23:30.835208'
-    record1.package = MavlinkPackageWrapper(FakeAttitudePackages[0])
+    record1.utcTime = '2019-03-13 06:23:41.736037'
+    record1.package = MavlinkPackageWrapper(AttitudePackage)
 
     record2 = Record()
-    record2.pipeId = 1
-    record2.utcTime = '2019-03-13 06:23:31.036249'
-    record2.package = MavlinkPackageWrapper(FakeAttitudePackages[1])
+    record2.pipeId = 2
+    record2.utcTime = '2019-03-13 06:23:41.537338'
+    record2.package = MavlinkPackageWrapper(SnsPackage)
 
-    return [record1, record2]
+    record3 = Record()
+    record3.pipeId = 3
+    record3.utcTime = '2019-03-13 07:21:18.538242'
+    record3.package = MavlinkPackageWrapper(PilotPackage)
+
+    record4 = Record()
+    record4.pipeId = 4
+    record4.utcTime = '2019-03-13 07:21:18.338870'
+    record4.package = MavlinkPackageWrapper(CompassPackage)
+
+    return [record1, record2, record3, record4]
 
 
 @pytest.mark.filterwarnings("ignore: DeprecationWarning")
-def test_RecordMapper_findRecordForPipe(DatabaseConnection, Records, AttitudeMetadata, FakeAttitudePackages):
+def test_RecordMapper_findRecordForPipe(DatabaseConnection, Records, AttitudeMetadata):
 
     mapper = RecordMapper(DatabaseConnection)
     mapper.metadata = AttitudeMetadata
 
     firstPipeRecords = mapper.findRecordsForPipe(1)
 
-    assert firstPipeRecords == Records
+    assert firstPipeRecords == [Records[0]]

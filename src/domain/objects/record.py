@@ -14,7 +14,10 @@ class Record(DatabaseObject):
 
 
     def __eq__(self, other):
-        return all((self.pipeId == other.pipeId, self.utcTime == other.utcTime, self.package == other.package))
+
+        return all((self.pipeId == other.pipeId,
+                    self.utcTime == other.utcTime,
+                    self.package == other.package))
 
 
     def toDict(self):

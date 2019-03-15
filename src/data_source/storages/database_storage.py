@@ -57,25 +57,23 @@ class DatabaseStorage(IStorage):
 
 
     @override
-    def findPipesForSessions(self, sessionsId, includeRecords):
+    def findPipesForSessions(self, sessionsId, includeRecords, interval = None):
 
         pipeMapper = MapperRegistry().getMapperFor(Pipe)
         pipes = pipeMapper.findPipesForSessions(sessionsId)
 
         if includeRecords:
-            self.handleRecords(pipes)
+            self.handleRecords(pipes, interval)
 
         return pipes
 
 
     @private
-    def handleRecords(self, pipes):
+    def handleRecords(self, pipes, interval):
 
         recordMapper = MapperRegistry().getMapperFor(Record)
 
         for pipe in pipes:
 
-
-
             recordMapper.metadata = pipe.metaData
-            pipe.records = recordMapper.findRecordsForPipe(pipe.primaryKey)
+            pipe.records = recordMapper.findRecordsForPipe(pipe.primaryKey, interval)

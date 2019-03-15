@@ -1,6 +1,7 @@
 from .mapper import *
 # Internal
 from src.common.decorators import override
+from src.helper.interval import Unit, Interval
 from src.domain.objects.session import Session
 from src.domain.converters.date_time_converter import DateTimeConverter
 
@@ -9,63 +10,27 @@ class SessionMapper(Mapper):
 
     def findAll(self):
 
-        dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1,'
-                              '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
-                              'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 WHERE s1.Id = s2.Id')
+        dataSets = self.abstractFind('SELECT * FROM SessionView')
 
         sessions = self.handleDataSets(dataSets)
         return sessions
 
 
-    def filterSessions(self, sessions: iter, start, stop, inclusive):
+    def findInsideTimestamp(self, *, interval: Interval, inclusive = False):
 
-        result = []
+        interval = interval.transformTo(Unit.Second)
 
-        start = DateTimeConverter.translateUtcToSecondsSinceEpoch(start)
-        stop = DateTimeConverter.translateUtcToSecondsSinceEpoch(stop)
+        if inclusive:
+            dataSets = self.abstractFind('SELECT * FROM SessionView WHERE (StartSession >= ? and StartSession <= ?) '
+                                         'or (EndSession >= ? and EndSession <= ?)',
+                                         (interval.start, interval.stop, interval.start, interval.stop))
 
-        for session in sessions:
+        else:
+            dataSets = self.abstractFind('SELECT * FROM SessionView WHERE StartSession >= ? and EndSession <= ?',
+                                         (interval.start, interval.stop))
 
-            sessionStart = DateTimeConverter.translateUtcToSecondsSinceEpoch(session.startUtcTime)
-            sessionStop = DateTimeConverter.translateUtcToSecondsSinceEpoch(session.stopUtcTime)
-
-            if inclusive:
-
-                if (sessionStart >= start and sessionStart <= stop) or (sessionStop >= start and sessionStop <= stop):
-                    result.append(session)
-
-            else:
-                if sessionStart >= start and sessionStop <= stop:
-
-                    result.append(session)
-
-
-        return result
-
-
-
-
-    def findInsideTimestamp(self, *, start, stop, inclusive = False):
-
-        sessions = self.findAll()
-        sessions = self.filterSessions(sessions, start, stop, inclusive)
+        sessions = self.handleDataSets(dataSets)
         return sessions
-
-        # if not inclusive:
-        #
-        #     dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1,'
-        #                       '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
-        #                       'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 '
-        #                       'WHERE s1.Id = s2.Id AND s2.Timestamp >= ? AND s2.EndSession <= ?', (start, stop))
-        # else:
-        #
-        #     dataSets = self.abstractFind('SELECT s1.Id, s1.Timestamp, s2.EndSession, s1.Unit, s1.OriginTime FROM Session s1, '
-        #                       '(SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s '
-        #                       'WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 '
-        #                       'WHERE s1.Id = s2.Id AND ((? BETWEEN s2.Timestamp AND s2.EndSession) '
-        #                       'OR (? BETWEEN s2.Timestamp AND s2.EndSession))', (start, stop))
-        #
-        # return self.handleDataSets(dataSets)
 
 
     @override
@@ -76,19 +41,10 @@ class SessionMapper(Mapper):
         session = Session()
         session.primaryKey = next(iterator)
 
+        sessionStartInSeconds = next(iterator)
+        sessionStopInSeconds = next(iterator)
 
-        startTimestamp = next(iterator)
-        stopTimestamp = next(iterator)
-
-        session.unit = next(iterator)
-
-        startOriginTime = next(iterator).decode('utf-8')
-        session.startUtcTime = DateTimeConverter.dropUtcNanoseconds(startOriginTime)
-
-        sessionClocksDuration = stopTimestamp - startTimestamp
-        sessionSecondsDuration = sessionClocksDuration * session.unit
-        sessionStartSecondsSinceEpoch = DateTimeConverter.translateUtcToSecondsSinceEpoch(session.startUtcTime)
-
-        session.stopUtcTime = DateTimeConverter.translateSecondsSinceEpochToUtc(sessionStartSecondsSinceEpoch + sessionSecondsDuration)
+        session.startUtcTime = DateTimeConverter.translateSecondsSinceEpochToUtc(sessionStartInSeconds)
+        session.stopUtcTime = DateTimeConverter.translateSecondsSinceEpochToUtc(sessionStopInSeconds)
 
         return session

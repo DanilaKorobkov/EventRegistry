@@ -1,3 +1,5 @@
+# Internal
+from src.helper.interval import Interval
 
 
 class IStorage:
@@ -14,5 +16,5 @@ class IStorage:
         raise NotImplementedError
 
 
-    def findPipesForSessions(self, sessionsId: list, includeRecords: bool):
+    def findPipesForSessions(self, sessionsId: list, includeRecords: bool, interval: Interval):
         raise NotImplementedError

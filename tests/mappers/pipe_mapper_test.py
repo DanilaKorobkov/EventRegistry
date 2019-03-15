@@ -47,3 +47,12 @@ def test_PipeMapper_findPipesForSessions(DatabaseConnection, Pipes):
     firstSessionPipe = mapper.findPipesForSessions([1])
 
     assert firstSessionPipe == [Pipes[0], Pipes[1]]
+
+
+def test_PipeMapper_findPipesForSessionsInInterval(DatabaseConnection, Pipes):
+
+    mapper = PipeMapper(DatabaseConnection)
+
+    firstSessionPipe = mapper.findPipesForSessions([1])
+
+    assert firstSessionPipe == [Pipes[0], Pipes[1]]

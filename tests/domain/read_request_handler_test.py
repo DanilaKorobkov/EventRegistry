@@ -70,7 +70,8 @@ def test_ReadRequestHandler_handlePipesRequest_whenSessionsId_notEmpty(StorageMo
     eventReadHandler.handlePipesRequest(request)
 
     StorageMock.findPipesForSessions.assert_called_once_with(request.getAttribute('sessionsId'),
-                                                             request.getAttribute('includeRecords'))
+                                                             request.getAttribute('includeRecords'),
+                                                             None)
 
 
 def test_ReadRequestHandler_handleSessionsRequest_whenTimestampOrIncludeIncompleteEntries_empty(StorageMock, GetAllSessionsRequest):
