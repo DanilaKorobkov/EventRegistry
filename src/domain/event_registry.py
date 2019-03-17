@@ -39,7 +39,7 @@ class EventRegistry:
                     handler = self.requestTypeHandlers.get(requestType)
                     return handler.handle(requestData)
 
-                raise WrongRequest
+            raise WrongRequest
 
         except WrongRequest:
             raise WrongRequest(str(request))
