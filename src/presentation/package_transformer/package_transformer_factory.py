@@ -1,11 +1,12 @@
 # Internal
-from .bson_package_transformer import *
+from .i_package_transformer import IPackageTransformer
+from .bson_package_transformer import BsonPackageTransformer
 
 
 class PackageTransformerFactory:
 
     @classmethod
-    def getPackageTransformer(cls):
+    def getPackageTransformer(cls) -> IPackageTransformer:
 
         return cls.__getBsonPackageTransformer()
 
