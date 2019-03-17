@@ -1,6 +1,6 @@
 # Internal
 from tests.domain.mavlink.conftest import *
-from src.helper.dict_wrapper import DictWrapper
+from src.helper.request_wrapper import RequestWrapper
 # Python
 import pytest
 from asyncio import coroutine
@@ -23,17 +23,22 @@ def AsyncMock():
 
 @pytest.fixture
 def GetRequest():
-    return DictWrapper({'type': 'get', 'data': {'what': 'Pipes', 'sessionsId': [], 'interval': {'startNanoseconds': 1, 'stopNanoseconds': 2}}})
+    return RequestWrapper({'type': 'get', 'data': {'what': 'Pipes', 'sessionsId': [], 'interval': {'startNanoseconds': 1, 'stopNanoseconds': 2}}})
 
 
 @pytest.fixture
 def SetRequest():
-    return DictWrapper({'type': 'set', 'data': {}})
+    return RequestWrapper({'type': 'set', 'data': {}})
 
 
 @pytest.fixture
 def RequestWithWrongType():
-    return DictWrapper({'type': 'Wrong', 'data': {}})
+    return RequestWrapper({'type': 'Wrong', 'data': {}})
+
+
+@pytest.fixture
+def RequestWithWrongFields():
+    return RequestWrapper({'field1': 0, 'field2': 0})
 
 
 @pytest.fixture(scope='session')

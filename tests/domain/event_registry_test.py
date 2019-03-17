@@ -1,22 +1,28 @@
 # Internal
-from src.domain.event_registry import EventRegistry, WrongRequestType
+from src.domain.event_registry import EventRegistry, WrongRequest
 # Python
 import pytest
 
 
-def test_eventRegistry_handleRequest(mocker, GetRequest, SetRequest, RequestWithWrongType):
+def test_eventRegistry_handleRequest(mocker, GetRequest, SetRequest, RequestWithWrongType, RequestWithWrongFields):
 
     eventRegistry = EventRegistry()
 
-    mocker.patch.object(eventRegistry.readRequestHandler, 'handle')
-    mocker.patch.object(eventRegistry.writeRequestHandler, 'handle')
+    readHandler = eventRegistry.requestTypeHandlers.get('get')
+    writeHandler = eventRegistry.requestTypeHandlers.get('set')
+
+    mocker.patch.object(readHandler, 'handle')
+    mocker.patch.object(writeHandler, 'handle')
 
     eventRegistry.handleRequest(GetRequest)
     eventRegistry.handleRequest(SetRequest)
 
-    with pytest.raises(WrongRequestType):
+    with pytest.raises(WrongRequest):
         eventRegistry.handleRequest(RequestWithWrongType)
 
-    eventRegistry.readRequestHandler.handle.assert_called_once_with(GetRequest.get('data'))
-    eventRegistry.writeRequestHandler.handle.assert_called_once_with(SetRequest.get('data'))
+    with pytest.raises(WrongRequest):
+        eventRegistry.handleRequest(RequestWithWrongFields)
+
+    readHandler.handle.assert_called_once_with(GetRequest.get('data'))
+    writeHandler.handle.assert_called_once_with(SetRequest.get('data'))
 

@@ -1,4 +1,4 @@
-from src.data_source.storages.i_storage import *
+from src.data_source.storage.storages.i_storage import *
 # Internal
 from src.common.decorators import override, singleton, private
 from src.mapper.registry.mapper_registry import MapperRegistry

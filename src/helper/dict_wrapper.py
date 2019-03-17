@@ -29,3 +29,7 @@ class DictWrapper:
 
     def __eq__(self, other):
         return self.dictionary == other
+
+
+    def __str__(self):
+        return str(self.dictionary)

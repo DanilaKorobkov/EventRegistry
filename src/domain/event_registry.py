@@ -1,12 +1,12 @@
 # Internal
-from src.common.decorators import singleton
-from src.helper.dict_wrapper import DictWrapper
-from src.data_source.storage_factory import StorageFactory
+from src.common.decorators import *
+from src.helper.request_wrapper import RequestWrapper
+from src.data_source.storage.storage_factory import StorageFactory
 from src.domain.request_handlers.read_request_handler import ReadRequestHandler
 from src.domain.request_handlers.write_request_handler import WriteRequestHandler
 
 
-class WrongRequestType(Exception):
+class WrongRequest(Exception):
     pass
 
 
@@ -15,23 +15,29 @@ class EventRegistry:
 
     def __init__(self):
 
-        databaseStorage = StorageFactory.getDatabaseStorage()
+        databaseStorage = StorageFactory.getStorage()
 
-        self.readRequestHandler = ReadRequestHandler(databaseStorage)
-        self.writeRequestHandler = WriteRequestHandler(databaseStorage)
+        self.requestTypeHandlers = \
+            {
+                'get': ReadRequestHandler(databaseStorage),
+                'set': WriteRequestHandler(databaseStorage)
+            }
 
 
+    @final
     def handleRequests(self, requests):
-
         return [self.handleRequest(request) for request in requests]
 
 
-    def handleRequest(self, request: DictWrapper):
+    def handleRequest(self, request: RequestWrapper):
 
-        if request.get('type') == 'get':
-            return self.readRequestHandler.handle(request.get('data'))
+        if request.getAllParameters() == {'type', 'data'}:
 
-        elif request.get('type') == 'set':
-            return self.writeRequestHandler.handle(request.get('data'))
+            requestType = request.get('type')
 
-        raise WrongRequestType(str(request))
+            if requestType in self.requestTypeHandlers:
+
+                handler = self.requestTypeHandlers.get(requestType)
+                return handler.handle(request.get('data'))
+
+        raise WrongRequest(str(request))

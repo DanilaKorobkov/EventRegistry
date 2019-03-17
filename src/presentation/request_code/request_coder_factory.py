@@ -1,6 +1,6 @@
 # Internal
-from .i_request_coder import IRequestCoder
-from .bson_request_coder import BsonRequestCoder
+from .request_coders.i_request_coder import IRequestCoder
+from .request_coders.bson_request_coder import BsonRequestCoder
 
 
 class RequestCoderFactory:
@@ -13,4 +13,5 @@ class RequestCoderFactory:
 
     @staticmethod
     def __getBsonRequestCoder():
+
         return BsonRequestCoder()
