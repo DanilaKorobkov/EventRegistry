@@ -1,3 +1,8 @@
+"""
+Json запрос может быть обернут внутрь BSON, HTTP или т.п.
+IRequestCoder - интерфейс для преобразования запроса в этот вид и обратно
+"""
+
 # Internal
 from src.common.decorators import final
 from src.helper.dict_wrapper import DictWrapper

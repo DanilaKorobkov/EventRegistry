@@ -7,17 +7,17 @@ class DictWrapper:
         self.dictionary = dictionary
 
 
-    def hasAttribute(self, name):
+    def has(self, name):
 
         value = self.dictionary.get(name, None)
         return value is not None
 
 
-    def getAttribute(self, name):
+    def get(self, name):
 
         value = None
 
-        if self.hasAttribute(name):
+        if self.has(name):
 
             value = self.dictionary.get(name)
 

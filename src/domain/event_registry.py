@@ -28,10 +28,10 @@ class EventRegistry:
 
     def handleRequest(self, request: DictWrapper):
 
-        if request.getAttribute('type') == 'get':
-            return self.readRequestHandler.handle(request.getAttribute('data'))
+        if request.get('type') == 'get':
+            return self.readRequestHandler.handle(request.get('data'))
 
-        elif request.getAttribute('type') == 'set':
-            return self.writeRequestHandler.handle(request.getAttribute('data'))
+        elif request.get('type') == 'set':
+            return self.writeRequestHandler.handle(request.get('data'))
 
         raise WrongRequestType(str(request))
