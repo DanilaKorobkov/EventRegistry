@@ -18,10 +18,10 @@ class EventRegistry:
         databaseStorage = StorageFactory.getStorage()
 
         self.requestTypeHandlers = \
-            {
-                'get': ReadRequestHandler(databaseStorage),
-                'set': WriteRequestHandler(databaseStorage)
-            }
+        {
+            'get': ReadRequestHandler(databaseStorage),
+            'set': WriteRequestHandler(databaseStorage)
+        }
 
 
     @final
@@ -34,10 +34,11 @@ class EventRegistry:
         if request.getAllParameters() == {'type', 'data'}:
 
             requestType = request.get('type')
+            requestData = request.get('data')
 
             if requestType in self.requestTypeHandlers:
 
                 handler = self.requestTypeHandlers.get(requestType)
-                return handler.handle(request.get('data'))
+                return handler.handle(requestData)
 
         raise WrongRequest(str(request))
