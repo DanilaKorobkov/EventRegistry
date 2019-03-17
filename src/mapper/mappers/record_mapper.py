@@ -34,6 +34,9 @@ class RecordMapper(Mapper):
 
     def createRecordView(self):
 
+        dropView = 'DROP VIEW IF EXISTS RecordView'
+        self.dbConnection.execute(dropView)
+
         createRecordView = """CREATE VIEW RecordView AS SELECT r.Id, r.PipeId, 
         strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + 
         strftime('%f',s.OriginTime) + s.Unit * (r.Timestamp - s.Timestamp) as RecordTimeInSec,
