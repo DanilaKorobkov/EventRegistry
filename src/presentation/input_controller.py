@@ -1,3 +1,6 @@
+"""InputController - принимает запрос, раскодирует, делегирует обработку,
+ кодирует и отправляет ответ"""
+
 # Internal
 from src.domain.event_registry import EventRegistry
 from src.presentation.request_code.request_coder_factory import RequestCoderFactory

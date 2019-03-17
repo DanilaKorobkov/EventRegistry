@@ -1,11 +1,9 @@
-"""
-Json запрос может быть обернут внутрь BSON, HTTP или т.п.
-IRequestCoder - интерфейс для преобразования запроса в этот вид и обратно
-"""
+"""Json запрос может быть обернут внутрь BSON, HTTP или т.п.
+IRequestCoder - интерфейс для преобразования запроса в этот вид и обратно"""
 
 # Internal
 from src.common.decorators import final
-from src.helper.dict_wrapper import DictWrapper
+from src.helper.request_wrapper import RequestWrapper
 
 
 class IRequestCoder:
@@ -13,7 +11,7 @@ class IRequestCoder:
     @final
     def decodeMultiple(self, requests):
 
-        return [DictWrapper(self.decodeSingle(request)) for request in requests]
+        return [RequestWrapper(self.decodeSingle(request)) for request in requests]
 
 
     @final

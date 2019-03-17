@@ -22,7 +22,7 @@ class DictWrapper:
             value = self.dictionary.get(name)
 
             if type(value) is dict:
-                value = DictWrapper(value)
+                value = self.__class__(value)
 
         return value
 

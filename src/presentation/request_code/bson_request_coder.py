@@ -1,7 +1,5 @@
-"""
-Json запрос может быть обернут внутрь BSON, HTTP или т.п.
-BsonRequestCoder - преобразует запрос в BSON и обратно
-"""
+"""Json запрос может быть обернут внутрь BSON, HTTP или т.п.
+BsonRequestCoder - преобразует запрос в BSON и обратно"""
 
 from .i_request_coder import *
 # Internal
