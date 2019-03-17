@@ -5,4 +5,3 @@ class RequestWrapper(DictWrapper):
 
     def getAllParameters(self):
         return set(self.dictionary.keys())
-
