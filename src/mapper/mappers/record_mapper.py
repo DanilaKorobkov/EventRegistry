@@ -51,11 +51,15 @@ class RecordMapper(Mapper):
         dropView = 'DROP VIEW IF EXISTS RecordView'
         self.dbConnection.execute(dropView)
 
+        sessionStartSec = "strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + strftime('%f',s.OriginTime)"
+        recordSecFromSessionStart = sessionStartSec + ' + ' + "s.Unit * (r.Timestamp - s.Timestamp)"
+
         createRecordView = """CREATE VIEW RecordView AS SELECT r.Id, r.PipeId, 
-        strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + 
-        strftime('%f',s.OriginTime) + s.Unit * (r.Timestamp - s.Timestamp) as RecordTimeInSec,
-        r.SerialData 
-        FROM Session s, Pipe p, Record r WHERE p.SessionId = s.Id AND r.PipeId = p.Id ORDER BY r.Timestamp;"""
+                           {RecordTimeInSec} as RecordTimeInSec, r.SerialData 
+                           FROM Session s, Pipe p, Record r 
+                           WHERE p.SessionId = s.Id AND r.PipeId = p.Id 
+                           ORDER BY r.Timestamp;""".format(RecordTimeInSec = recordSecFromSessionStart)
+
         self.dbConnection.execute(createRecordView)
         self.dbConnection.commit()
 

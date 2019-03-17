@@ -2,8 +2,6 @@
 
 class Mapper:
 
-    tableName: str = None
-
     def __init__(self, dbConnection):
 
         self.dbConnection = dbConnection
@@ -19,6 +17,7 @@ class Mapper:
 
 
     def handleDataSets(self, dataSets):
+
         results = [self.handleDataSet(dataSet) for dataSet in dataSets]
         return results
 

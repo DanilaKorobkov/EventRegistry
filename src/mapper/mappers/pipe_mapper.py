@@ -20,8 +20,8 @@ class PipeMapper(Mapper):
             searchRange = searchRange.replace(',', '')
 
         dataSets = self.abstractFind('SELECT * FROM Pipe WHERE SessionId IN {0}'.format(searchRange))
-        pipes = self.handleDataSets(dataSets)
 
+        pipes = self.handleDataSets(dataSets)
         return pipes
 
 
