@@ -1,13 +1,13 @@
 from .i_request_handler import *
 # Internal
 from src.helper.interval import Unit, Interval
-from src.helper.dict_wrapper import DictWrapper
+from src.helper.request_wrapper import RequestWrapper
 from src.domain.converters.date_time_converter import DateTimeConverter
 
 
 class ReadRequestHandler(IRequestHandler):
 
-    def handle(self, request: DictWrapper):
+    def handle(self, request: RequestWrapper):
 
         if request.get('what') == 'Pipes':
 
@@ -18,7 +18,7 @@ class ReadRequestHandler(IRequestHandler):
             return self.handleSessionsRequest(request)
 
 
-    def handlePipesRequest(self, request: DictWrapper):
+    def handlePipesRequest(self, request: RequestWrapper):
 
         if request.has('sessionsId'):
 
@@ -28,9 +28,9 @@ class ReadRequestHandler(IRequestHandler):
 
                 interval = request.get('interval')
 
-                start = interval.getAttribute('start')
-                stop = interval.getAttribute('stop')
-                unit = Unit[interval.getAttribute('unit')]
+                start = interval.get('start')
+                stop = interval.get('stop')
+                unit = Unit[interval.get('unit')]
 
                 interval = Interval(start, stop, unit)
 
@@ -44,7 +44,7 @@ class ReadRequestHandler(IRequestHandler):
         return pipes
 
 
-    def handleSessionsRequest(self, request: DictWrapper):
+    def handleSessionsRequest(self, request: RequestWrapper):
 
         if request.has('interval') and request.has('includeIncompleteEntries'):
 
