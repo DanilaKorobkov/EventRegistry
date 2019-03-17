@@ -32,6 +32,18 @@ class RecordMapper(Mapper):
         return records
 
 
+    def createRecordView(self):
+
+        createRecordView = """CREATE VIEW RecordView AS SELECT r.Id, r.PipeId, 
+        strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + 
+        strftime('%f',s.OriginTime) + s.Unit * (r.Timestamp - s.Timestamp) as RecordTimeInSec,
+        r.SerialData 
+        FROM Session s, Pipe p, Record r WHERE p.SessionId = s.Id AND r.PipeId = p.Id ORDER BY r.Timestamp;"""
+        self.dbConnection.execute(createRecordView)
+        self.dbConnection.commit()
+
+
+
     @override
     def handleDataSet(self, dataSet):
 

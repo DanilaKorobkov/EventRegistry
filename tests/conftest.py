@@ -80,24 +80,6 @@ def DatabaseConnection(AttitudeMetadata, SnsMetadata, PilotMetadata, CompassMeta
                (4, 781513006331392, b'\x1c\x05\x00\x00\x19\x15\xb0\x40\xe1\x19\xa9\x40\xfd')]
     cur.executemany('INSERT INTO Record (PipeId, Timestamp, SerialData)  VALUES (?,?,?)', records)
 
-
-    createRecordView = """CREATE VIEW RecordView AS SELECT r.Id, r.PipeId, 
-    strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + 
-    strftime('%f',s.OriginTime) + s.Unit * (r.Timestamp - s.Timestamp) as RecordTimeInSec,
-    r.SerialData 
-    FROM Session s, Pipe p, Record r WHERE p.SessionId = s.Id AND r.PipeId = p.Id ORDER BY r.Timestamp;"""
-    cur.execute(createRecordView)
-
-
-    createSessionView = """CREATE VIEW SessionView AS 
-    SELECT s.Id,
-    strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + strftime('%f',s.OriginTime) as StartSession,
-    strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + strftime('%f',s.OriginTime) + s.Unit * (s2.EndSession - s.Timestamp) as EndSession, 
-    s.OriginTime 
-    FROM Session s, (SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 WHERE s.Id = s2.Id ORDER BY s.OriginTime"""
-    cur.execute(createSessionView)
-
-
     con.commit()
 
     yield con

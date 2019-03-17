@@ -36,6 +36,7 @@ def Records(AttitudePackage, SnsPackage, PilotPackage, CompassPackage):
 def test_RecordMapper_findRecordForPipe(DatabaseConnection, Records, AttitudeMetadata):
 
     mapper = RecordMapper(DatabaseConnection)
+    mapper.createRecordView()
     mapper.metadata = AttitudeMetadata
 
     firstPipeRecords = mapper.findRecordsForPipe(1)

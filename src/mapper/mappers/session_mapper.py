@@ -10,6 +10,8 @@ class SessionMapper(Mapper):
 
     def findAll(self):
 
+        self.createSessionView()
+
         dataSets = self.abstractFind('SELECT * FROM SessionView')
 
         sessions = self.handleDataSets(dataSets)
@@ -17,6 +19,8 @@ class SessionMapper(Mapper):
 
 
     def findInsideTimestamp(self, *, interval: Interval, inclusive = False):
+
+        self.createSessionView()
 
         interval = interval.transformTo(Unit.Second)
 
@@ -31,6 +35,25 @@ class SessionMapper(Mapper):
 
         sessions = self.handleDataSets(dataSets)
         return sessions
+
+    def createSessionView(self):
+
+        dropView = 'DROP VIEW IF EXISTS SessionView'
+        self.dbConnection.execute(dropView)
+
+        createSessionView = """CREATE VIEW SessionView AS 
+        SELECT s.Id,
+        strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + strftime('%f',s.OriginTime) as StartSession,
+        strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime, 'utc')) + strftime('%f',s.OriginTime) + 
+        s.Unit * (s2.EndSession - s.Timestamp) as EndSession, 
+        s.OriginTime 
+        FROM Session s, (SELECT s.Id, s.Timestamp, MAX(r.Timestamp) as EndSession FROM Record r, Pipe p, Session s 
+        WHERE s.Id = p.SessionId AND p.Id = r.PipeId GROUP BY s.Id) s2 WHERE s.Id = s2.Id ORDER BY s.OriginTime"""
+        self.dbConnection.execute(createSessionView)
+
+        self.dbConnection.commit()
+
+
 
 
     @override

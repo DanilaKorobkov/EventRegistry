@@ -72,6 +72,7 @@ class DatabaseStorage(IStorage):
     def handleRecords(self, pipes, interval):
 
         recordMapper = MapperRegistry().getMapperFor(Record)
+        recordMapper.createRecordView()
 
         for pipe in pipes:
 
