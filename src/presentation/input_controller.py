@@ -1,6 +1,6 @@
 # Internal
 from src.domain.event_registry import EventRegistry
-from src.presentation.package_transformer.bson_package_transformer import BsonPackageTransformer
+from src.presentation.package_transformer.package_transformer_factory import PackageTransformerFactory
 # Python
 import zmq.asyncio
 import asyncio
@@ -12,7 +12,7 @@ class InputController:
 
     def __init__(self):
 
-        self.packageTransformer = BsonPackageTransformer()
+        self.packageTransformer = PackageTransformerFactory.getPackageTransformer()
 
         self.ctx = zmq.asyncio.Context()
         self.socket = self.ctx.socket(zmq.REP)
@@ -40,16 +40,11 @@ class InputController:
 
         while self.session:
 
-            print()
             requests = await self.socket.recv_multipart()
-            print(requests)
             requests = self.packageTransformer.decodeMultiple(requests)
-            print(requests[0].dictionary)
+
             replies = EventRegistry().handleRequests(requests)
-            print(replies)
             replies = self.packageTransformer.encodeMultiple(replies)
 
-            print(replies)
-            print()
             await self.socket.send_multipart(replies)
             await asyncio.sleep(0)
