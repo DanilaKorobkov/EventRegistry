@@ -1,11 +1,11 @@
-from .i_package_transformer import *
+from .i_request_coder import *
 # Internal
 from src.common.decorators import override
 # Python
 import bson
 
 
-class BsonPackageTransformer(IPackageTransformer):
+class BsonRequestCoder(IRequestCoder):
 
     @override
     def encodeSingle(self, obj):

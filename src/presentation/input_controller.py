@@ -1,6 +1,6 @@
 # Internal
 from src.domain.event_registry import EventRegistry
-from src.presentation.package_transformer.package_transformer_factory import PackageTransformerFactory
+from src.presentation.request_code.request_coder_factory import RequestCoderFactory
 # Python
 import zmq.asyncio
 import asyncio
@@ -12,7 +12,7 @@ class InputController:
 
     def __init__(self):
 
-        self.packageTransformer = PackageTransformerFactory.getPackageTransformer()
+        self.packageTransformer = RequestCoderFactory.getRequestCoder()
 
         self.ctx = zmq.asyncio.Context()
         self.socket = self.ctx.socket(zmq.REP)

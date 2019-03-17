@@ -3,7 +3,7 @@ from src.common.decorators import final
 from src.helper.dict_wrapper import DictWrapper
 
 
-class IPackageTransformer:
+class IRequestCoder:
 
     @final
     def decodeMultiple(self, requests):
