@@ -128,22 +128,22 @@ def CompassMetadata():
 @pytest.fixture
 def AttitudePayload(AttitudeMetadata):
 
-    return {'metadata': AttitudeMetadata, 'data': attitudePayload}
+    return {'metaData': AttitudeMetadata, 'data': attitudePayload}
 
 
 @pytest.fixture
 def SnsPayload(SnsMetadata):
 
-    return {'metadata': SnsMetadata, 'data': snsPayload}
+    return {'metaData': SnsMetadata, 'data': snsPayload}
 
 
 @pytest.fixture
 def PilotPayload(PilotMetadata):
 
-    return {'metadata': PilotMetadata, 'data': pilotPayload}
+    return {'metaData': PilotMetadata, 'data': pilotPayload}
 
 
 @pytest.fixture
 def CompassPayload(CompassMetadata):
 
-    return {'metadata': CompassMetadata, 'data': compassPayload}
+    return {'metaData': CompassMetadata, 'data': compassPayload}

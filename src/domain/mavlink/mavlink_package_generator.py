@@ -13,15 +13,15 @@ class MavlinkPackageGenerator:
     def __init__(self):
 
         self.dialect = None
-        self.metadata: str = None
+        self.metaData: str = None
 
 
-    def changeDialect(self, metadata):
+    def changeDialect(self, metaData):
 
-        if self.metadata != metadata:
+        if self.metaData != metaData:
 
-            self.metadata = metadata
-            self.dialect = MavlinkDialectGenerator().generateUsing(metadata)
+            self.metaData = metaData
+            self.dialect = MavlinkDialectGenerator().generateUsing(metaData)
 
 
     def generatePackageFor(self, payload: bytes):

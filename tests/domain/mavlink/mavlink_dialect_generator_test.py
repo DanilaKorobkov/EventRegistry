@@ -9,8 +9,8 @@ def DataSet(request, AttitudeMetadata, PilotMetadata):
 
     data = request.param
 
-    metadata = AttitudeMetadata if data['struct'] == 'MAVLink_attitude_message' else PilotMetadata
-    data.update({'metadata': metadata.encode('utf-8')})
+    metaData = AttitudeMetadata if data['struct'] == 'MAVLink_attitude_message' else PilotMetadata
+    data.update({'metaData': metaData.encode('utf-8')})
 
     return data
 
@@ -20,7 +20,7 @@ def test_MavlinkDialectGenerator_generateUsing(DataSet):
 
     mavlinkDialectGenerator = MavlinkDialectGenerator()
 
-    module = mavlinkDialectGenerator.generateUsing(DataSet['metadata'])
+    module = mavlinkDialectGenerator.generateUsing(DataSet['metaData'])
     module =  __import__(module, globals(), locals(), ['object'], 0)
 
     id = next(iter(module.mavlink_map))

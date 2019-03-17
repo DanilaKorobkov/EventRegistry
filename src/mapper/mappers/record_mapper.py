@@ -12,9 +12,23 @@ class RecordMapper(Mapper):
     def __init__(self, dbConnection):
         super().__init__(dbConnection)
 
-        self.metadata: str = None
+        self.__mavlinkGenerator = MavlinkPackageGenerator()
+        self.__metaData: str = None
 
-        self.mavlinkGenerator = MavlinkPackageGenerator()
+
+    @property
+    def metaData(self):
+
+        return self.__metaData
+
+
+    @metaData.setter
+    def metaData(self, metaData):
+
+        if self.metaData != metaData:
+
+            self.__metaData = metaData
+            self.__mavlinkGenerator.changeDialect(self.metaData)
 
 
     def findRecordsForPipe(self, pipeId, interval: Interval = None):
@@ -59,8 +73,6 @@ class RecordMapper(Mapper):
         record.utcTime = DateTimeConverter.translateSecondsSinceEpochToUtc(next(iterator))
 
         serialData = next(iterator)
-        # TODO: property
-        self.mavlinkGenerator.changeDialect(self.metadata)
-        record.package = self.mavlinkGenerator.generatePackageFor(serialData)
+        record.package = self.__mavlinkGenerator.generatePackageFor(serialData)
 
         return record

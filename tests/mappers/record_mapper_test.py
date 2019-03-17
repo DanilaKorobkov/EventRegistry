@@ -37,7 +37,7 @@ def test_RecordMapper_findRecordForPipe(DatabaseConnection, Records, AttitudeMet
 
     mapper = RecordMapper(DatabaseConnection)
     mapper.createRecordView()
-    mapper.metadata = AttitudeMetadata
+    mapper.metaData = AttitudeMetadata
 
     firstPipeRecords = mapper.findRecordsForPipe(1)
 

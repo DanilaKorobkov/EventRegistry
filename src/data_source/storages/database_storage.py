@@ -76,5 +76,5 @@ class DatabaseStorage(IStorage):
 
         for pipe in pipes:
 
-            recordMapper.metadata = pipe.metaData
+            recordMapper.metaData = pipe.metaData
             pipe.records = recordMapper.findRecordsForPipe(pipe.primaryKey, interval)

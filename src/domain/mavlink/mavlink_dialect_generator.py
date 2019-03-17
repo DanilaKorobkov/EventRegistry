@@ -8,9 +8,9 @@ import pymavlink.generator.mavgen as mavlink
 
 class MavlinkDialectGenerator:
 
-    def generateUsing(self, metadata: str):
+    def generateUsing(self, metaData: str):
 
-        xmlDialect = self.writeToXmlAndGetPath(metadata)
+        xmlDialect = self.writeToXmlAndGetPath(metaData)
 
         pathToDialect = os.path.join(pathToRuntimeGeneratedDialects, self.getDialectFileName())
 
@@ -33,16 +33,16 @@ class MavlinkDialectGenerator:
 
 
     @private
-    def writeToXmlAndGetPath(self, metadata):
+    def writeToXmlAndGetPath(self, metaData):
 
         xmlFullPath = os.path.join(tempfile.gettempdir(), 'tmp.xml')
 
         with open(xmlFullPath, 'w+') as xmlFile:
 
-            if type(metadata) is bytes:
-                metadata = metadata.decode('utf-8')
+            if type(metaData) is bytes:
+                metaData = metaData.decode('utf-8')
 
-            xmlFile.write(metadata)
+            xmlFile.write(metaData)
 
         return xmlFullPath
 

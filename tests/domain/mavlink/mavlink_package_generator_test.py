@@ -10,12 +10,12 @@ def MavlinkPackageFactory():
 
         gen = MavlinkPackageGenerator()
 
-        metadata = Payload['metadata']
+        metaData = Payload['metaData']
         data = Payload['data']
 
         payload = next(iter(data))
 
-        gen.changeDialect(metadata)
+        gen.changeDialect(metaData)
         mavlinkPackage = gen.generatePackageFor(payload)
 
         return mavlinkPackage
