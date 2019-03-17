@@ -40,28 +40,28 @@ def MavlinkPackageChecker():
 
 
 
-@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+@pytest.mark.filterwarnings("ignore")
 def test_generatePackageFor_AttitudePayload(MavlinkPackageFactory, MavlinkPackageChecker, AttitudePayload):
 
     package = MavlinkPackageFactory(AttitudePayload)
     MavlinkPackageChecker(package, AttitudePayload)
 
 
-@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+@pytest.mark.filterwarnings("ignore")
 def test_generatePackageFor_SnsPayload(MavlinkPackageFactory, MavlinkPackageChecker, SnsPayload):
 
     package = MavlinkPackageFactory(SnsPayload)
     MavlinkPackageChecker(package, SnsPayload)
 
 
-@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+@pytest.mark.filterwarnings("ignore")
 def test_generatePackageFor_PilotPayload(MavlinkPackageFactory, MavlinkPackageChecker, PilotPayload):
 
     package = MavlinkPackageFactory(PilotPayload)
     MavlinkPackageChecker(package, PilotPayload)
 
 
-@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+@pytest.mark.filterwarnings("ignore")
 def test_generatePackageFor_CompassPayload(MavlinkPackageFactory, MavlinkPackageChecker, CompassPayload):
 
     package = MavlinkPackageFactory(CompassPayload)

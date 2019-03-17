@@ -49,19 +49,22 @@ class FakeCompassPackage:
         self.time_boot_ms = time_boot_ms
 
 
-@pytest.fixture
-def AttitudePackage():
+def _AttitudePackageImpl():
 
-    package = FakeAttitudePackage(reliability = 80,
-                                  time_boot_ms = 1309,
-                                  yaw = 0.9987761974334717,
-                                  pitch = 0.028718125075101852,
-                                  roll = 0.0010043815709650517)
+    package = FakeAttitudePackage(reliability=80,
+                                  time_boot_ms=1309,
+                                  yaw=0.9987761974334717,
+                                  pitch=0.028718125075101852,
+                                  roll=0.0010043815709650517)
     return package
 
 
 @pytest.fixture
-def SnsPackage():
+def AttitudePackage():
+    return _AttitudePackageImpl()
+
+
+def _SnsPackageImpl():
 
     package = FakeSnsPackage(altitude = 53,
                              climb = -0.0028622429817914963,
@@ -74,9 +77,13 @@ def SnsPackage():
                              groundspeed = 0.01998048834502697)
     return package
 
-
 @pytest.fixture
-def PilotPackage():
+def SnsPackage():
+
+    return _SnsPackageImpl()
+
+
+def _PilotPackageImpl():
 
     package = FakePilotPackage(ias = 0.21934707462787628,
                                mach = 0.0001802280021365732,
@@ -87,7 +94,12 @@ def PilotPackage():
 
 
 @pytest.fixture
-def CompassPackage():
+def PilotPackage():
+
+    return _PilotPackageImpl()
+
+
+def _CompassPackageImpl():
 
     package = FakeCompassPackage(mag_heading = 5.502575397491455,
                                  true_heading = 5.284409046173096,
@@ -96,28 +108,34 @@ def CompassPackage():
     return package
 
 
+@pytest.fixture
+def CompassPackage():
+
+    return _CompassPackageImpl()
+
+
 attitudePayload = \
     {
         b'\x1d\x05\x00\x00\x74\xa5\x83\x3a\x46\x42\xeb\x3c\xcc\xaf\x7f\x3f\x50':
-            AttitudePackage()
+            _AttitudePackageImpl()
     }
 
 
 snsPayload = \
     {
         b'\xdd\x87\xb8\x75\x69\x01\x00\x00\x9a\x04\x00\x00\x65\x4a\x4b\x21\x6d\x4a\x4c\x1d\x35\x00\x00\x00\x1f\xae\xa3\x3c\x78\x94\x3b\xbb\x14\x1a\xa9\x40\xff':
-        SnsPackage()
+            _SnsPackageImpl()
     }
 
 
 pilotPayload = \
     {
         b'\x1c\x05\x00\x00\x40\xce\x61\x3e\x85\x9c\x60\x3e\x96\xfb\x3c\x39\x6d':
-            PilotPackage()
+            _PilotPackageImpl()
     }
 
 compassPayload = \
     {
         b'\x1c\x05\x00\x00\x19\x15\xb0\x40\xe1\x19\xa9\x40\xfd':
-            CompassPackage()
+            _CompassPackageImpl()
     }

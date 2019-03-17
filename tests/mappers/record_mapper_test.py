@@ -32,7 +32,7 @@ def Records(AttitudePackage, SnsPackage, PilotPackage, CompassPackage):
     return [record1, record2, record3, record4]
 
 
-@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+@pytest.mark.filterwarnings("ignore")
 def test_RecordMapper_findRecordForPipe(DatabaseConnection, Records, AttitudeMetadata):
 
     mapper = RecordMapper(DatabaseConnection)

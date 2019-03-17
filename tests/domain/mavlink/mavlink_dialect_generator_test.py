@@ -15,7 +15,7 @@ def DataSet(request, AttitudeMetadata, PilotMetadata):
     return data
 
 
-@pytest.mark.filterwarnings("ignore: DeprecationWarning")
+@pytest.mark.filterwarnings("ignore")
 def test_MavlinkDialectGenerator_generateUsing(DataSet):
 
     mavlinkDialectGenerator = MavlinkDialectGenerator()
