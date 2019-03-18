@@ -14,16 +14,16 @@ class InputController:
 
         self.packageTransformer = RequestCoderFactory.getRequestCoder()
 
-        self.ctx = zmq.asyncio.Context()
+        self.ctx = zmq.Context()
         self.socket = self.ctx.socket(zmq.REP)
 
         self.session = None
 
 
-    async def start(self):
+    def start(self):
 
         self.socket.bind(self.url)
-        self.session = asyncio.ensure_future(self.startHandleIncomePackages())
+        self.startHandleIncomePackages()
 
 
     async def stop(self):
@@ -36,15 +36,20 @@ class InputController:
         self.session = None
 
 
-    async def startHandleIncomePackages(self):
+    def startHandleIncomePackages(self):
 
-        while self.session:
+        while True:
 
-            requests = await self.socket.recv_multipart()
+            print()
+            requests = self.socket.recv_multipart()
+            print(requests)
             requests = self.packageTransformer.decodeMultiple(requests)
+            print(requests[0].dictionary)
 
             replies = EventRegistry().handleRequests(requests)
+            print(replies)
             replies = self.packageTransformer.encodeMultiple(replies)
-
-            await self.socket.send_multipart(replies)
-            await asyncio.sleep(0)
+            print(replies)
+            self.socket.send_multipart(replies)
+            print()
+            # await asyncio.sleep(0)

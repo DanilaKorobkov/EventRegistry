@@ -32,49 +32,48 @@ class DatabaseStorage(IStorage):
     def findAllSessions(self):
 
         sessionMapper = MapperRegistry().getMapperFor(Session)
+
         sessions = sessionMapper.findAll()
         return sessions
 
 
     @override
-    def findSessionsInsideTimestamp(self, parameters: dict):
+    def findSessionsInsideTimestamp(self, includeIncompleteEntries: bool, interval: Interval = None):
 
         sessionMapper = MapperRegistry().getMapperFor(Session)
-        sessions = sessionMapper.findInsideTimestamp(**parameters)
+
+        sessions = sessionMapper.findInsideTimestamp(includeIncompleteEntries, interval)
         return sessions
 
 
     @override
-    def findAllPipes(self, includeRecords):
+    def findAllPipes(self):
 
         pipeMapper = MapperRegistry().getMapperFor(Pipe)
+
         pipes = pipeMapper.findAll()
-
-        if includeRecords:
-            self.handleRecords(pipes)
-
         return pipes
 
 
     @override
-    def findPipesForSessions(self, sessionsId, includeRecords, interval = None):
+    def findPipesForSessions(self, sessionsId):
 
         pipeMapper = MapperRegistry().getMapperFor(Pipe)
+
         pipes = pipeMapper.findPipesForSessions(sessionsId)
-
-        if includeRecords:
-            self.handleRecords(pipes, interval)
-
         return pipes
 
 
-    @private
-    def handleRecords(self, pipes, interval):
+    @override
+    def findRecordsForPipe(self, pipeId: int, interval: Interval = None):
+
+        pipeMapper = MapperRegistry().getMapperFor(Pipe)
+        pipe = pipeMapper.find(pipeId)[0]
 
         recordMapper = MapperRegistry().getMapperFor(Record)
+        recordMapper.metaData = pipe.metaData
+
         recordMapper.createRecordView()
 
-        for pipe in pipes:
-
-            recordMapper.metaData = pipe.metaData
-            pipe.records = recordMapper.findRecordsForPipe(pipe.primaryKey, interval)
+        records = recordMapper.findRecordsForPipe(pipeId, interval)
+        return records

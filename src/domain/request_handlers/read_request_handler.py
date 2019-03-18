@@ -1,73 +1,77 @@
 from .i_request_handler import *
 # Internal
-from src.helper.interval import Unit, Interval
+from src.helper.interval import Interval
+from src.common.decorators import private
+from src.helper.time_point import Unit, TimePoint
 from src.helper.request_wrapper import RequestWrapper
-from src.domain.converters.date_time_converter import DateTimeConverter
 
 
 class ReadRequestHandler(IRequestHandler):
 
     def handle(self, request: RequestWrapper):
 
-        if request.get('what') == 'Pipes':
+        if request.has('what'):
 
-            return self.handlePipesRequest(request)
+            if request.get('what') == 'Pipes':
+                return self.handlePipesRequest(request)
 
-        if request.get('what') == 'Sessions':
+            if request.get('what') == 'Sessions':
+                return self.handleSessionsRequest(request)
 
-            return self.handleSessionsRequest(request)
+            if request.get('what') == 'Records':
+                return self.handleRecordsRequest(request)
 
-
-    def handlePipesRequest(self, request: RequestWrapper):
-
-        if request.has('sessionsId'):
-
-            interval = None
-
-            if request.has('interval'):
-
-                interval = request.get('interval')
-
-                start = interval.get('start')
-                stop = interval.get('stop')
-                unit = Unit[interval.get('unit')]
-
-                interval = Interval(start, stop, unit)
-
-            pipes = self.storage.findPipesForSessions(request.get('sessionsId'), request.get('includeRecords'), interval)
-
-        else:
-            pipes = self.storage.findAllPipes(request.get('includeRecords'))
-
-        pipes = [pipe.toDict() for pipe in pipes]
-        pipes = {'pipes': pipes}
-        return pipes
+        raise WrongRequest
 
 
     def handleSessionsRequest(self, request: RequestWrapper):
 
-        if request.has('interval') and request.has('includeIncompleteEntries'):
-
-            start = self.fromMicroSecToSec(request.get('interval').get('start'))
-            stop = self.fromMicroSecToSec(request.get('interval').get('stop'))
-
-            parameters = \
-                {
-                    'start': DateTimeConverter.translateSecondsSinceEpochToUtc(start),
-                    'stop': DateTimeConverter.translateSecondsSinceEpochToUtc(stop),
-                    'includeIncompleteEntries': request.get('includeIncompleteEntries')
-                }
-
-            sessions = self.storage.findSessionsInsideTimestamp(parameters)
+        if request.getAllParameters() == {'what'}:
+            sessions = self.storage.findAllSessions()
 
         else:
-            sessions = self.storage.findAllSessions()
+            interval = self.parseInterval(request) if request.has('interval') else None
+
+            sessions = self.storage.findSessionsInsideTimestamp(request.get('includeIncompleteEntries'), interval)
 
         sessions = [session.toDict() for session in sessions]
         sessions = {'sessions': sessions}
         return sessions
 
 
-    @staticmethod
-    def fromMicroSecToSec(microseconds):
-        return microseconds / 1e6
+    def handlePipesRequest(self, request: RequestWrapper):
+
+        if request.getAllParameters() == {'what'}:
+            pipes = self.storage.findAllPipes()
+
+        else:
+            pipes = self.storage.findPipesForSessions(request.get('sessionsId'))
+
+        pipes = [pipe.toDict() for pipe in pipes]
+        pipes = {'pipes': pipes}
+        return pipes
+
+
+    def handleRecordsRequest(self, request: RequestWrapper):
+
+        interval = self.parseInterval(request) if request.has('interval') else None
+
+        records = self.storage.findRecordsForPipe(request.get('pipeId'), interval)
+
+        records = [record.toDict() for record in records]
+        records = {'records': records}
+        return records
+
+
+    @private
+    def parseInterval(self, request):
+
+        interval = request.get('interval')
+
+        unit = Unit[interval.get('unit')]
+
+        startPoint = TimePoint(interval.get('start'), unit)
+        endPoint = TimePoint(interval.get('stop'), unit)
+
+        interval = Interval(startPoint, endPoint)
+        return interval

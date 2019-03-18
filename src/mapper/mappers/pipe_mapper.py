@@ -12,6 +12,12 @@ class PipeMapper(Mapper):
         return self.handleDataSets(dataSets)
 
 
+    def find(self, pipeId: int):
+
+        dataSets = self.abstractFind('SELECT * FROM Pipe WHERE Id = ?', (pipeId, ))
+        return self.handleDataSets(dataSets)
+
+
     def findPipesForSessions(self, sessionsId):
 
         searchRange = str(tuple(sessionsId))

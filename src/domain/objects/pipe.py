@@ -11,13 +11,12 @@ class Pipe(DatabaseObject):
         self.path: list = None
         self.metaData: bytes = None
 
-        self.records = []
-
 
     def __eq__(self, other):
 
-        return all((self.sessionId == other.sessionId, self.path == other.path,
-                    self.metaData == other.metaData, self.records == other.records))
+        return all((self.sessionId == other.sessionId,
+                    self.path == other.path,
+                    self.metaData == other.metaData))
 
 
     def toDict(self):
@@ -27,10 +26,5 @@ class Pipe(DatabaseObject):
                 'primaryKey': self.primaryKey,
                 'path': self.path
             }
-
-        if self.records:
-
-            records = [record.toDict() for record in self.records]
-            dictionary.update({'records': records})
 
         return dictionary

@@ -90,12 +90,3 @@ def DatabaseConnection(AttitudeMetadata, SnsMetadata, PilotMetadata, CompassMeta
     yield con
 
     con.close()
-
-
-# CREATE VIEW RecordView AS SELECT * FROM Record
-# CREATE VIEW RecordViewA AS SELECT * FROM Session s, Pipe p, Record r WHERE p.SessionId = s.Id AND r.PipeId = p.Id
-
-# CREATE VIEW RecordViewBCCCCCCCCC AS SELECT
-# s.Unit * (r.Timestamp - s.Timestamp) as SecondsDuration,
-# strftime('%s', strftime('%Y-%m-%d %H:%M',s.OriginTime)) + strftime('%f',s.OriginTime) as SessionUtcTimeT
-# FROM Session s, Pipe p, Record r WHERE p.SessionId = s.Id AND r.PipeId = p.Id;

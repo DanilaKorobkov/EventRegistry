@@ -1,6 +1,7 @@
 # Internal
 from src.domain.objects.session import Session
-from src.helper.interval import Unit, Interval
+from src.helper.interval import Interval
+from src.helper.time_point import TimePoint, Unit
 from src.mapper.mappers.session_mapper import SessionMapper
 # Python
 import pytest
@@ -10,12 +11,12 @@ import pytest
 def Sessions():
 
     session1 = Session()
-    session1.startUtcTime = '2019-03-13 06:23:36.386000'
-    session1.stopUtcTime = '2019-03-13 06:23:41.736037'
+    session1.interval = Interval(TimePoint('2019-03-13 06:23:36.386000', Unit.Utc).transformTo(Unit.Second),
+                                 TimePoint('2019-03-13 06:23:41.736037', Unit.Utc).transformTo(Unit.Second))
 
     session2 = Session()
-    session2.startUtcTime = '2019-03-13 07:21:12.601000'
-    session2.stopUtcTime = '2019-03-13 07:21:18.538242'
+    session2.interval = Interval(TimePoint('2019-03-13 07:21:12.601000', Unit.Utc).transformTo(Unit.Second),
+                                 TimePoint('2019-03-13 07:21:18.538242', Unit.Utc).transformTo(Unit.Second))
 
     return [session1, session2]
 
@@ -33,12 +34,10 @@ def test_SessionMapper_findInsideTimeStamp_InclusiveFalse(DatabaseConnection, Se
 
     mapper = SessionMapper(DatabaseConnection)
 
-    session1StartInSeconds = 1552447416.386
-    session2StartInSeconds = 1552450872.601
+    interval = Interval(TimePoint(1552447416.386, Unit.Second),
+                        TimePoint(1552450872.601, Unit.Second))
 
-    interval = Interval(session1StartInSeconds, session2StartInSeconds, Unit.Second)
-
-    sessions = mapper.findInsideTimestamp(interval = interval, inclusive = False)
+    sessions = mapper.findInsideTimestamp(includeIncompleteEntries = False, interval = interval)
 
     assert sessions == [Sessions[0]]
 
@@ -48,11 +47,9 @@ def test_SessionMapper_findInsideTimeStamp_InclusiveTrue(DatabaseConnection, Ses
 
     mapper = SessionMapper(DatabaseConnection)
 
-    session1StartInSeconds = 1552447416.386
-    session2StartInSeconds = 1552450872.601
+    interval = Interval(TimePoint(1552447416.386, Unit.Second),
+                        TimePoint(1552450872.601, Unit.Second))
 
-    interval = Interval(session1StartInSeconds, session2StartInSeconds, Unit.Second)
-
-    sessions = mapper.findInsideTimestamp(interval = interval, inclusive = True)
+    sessions = mapper.findInsideTimestamp(includeIncompleteEntries = True, interval = interval)
 
     assert sessions == Sessions

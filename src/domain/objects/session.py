@@ -1,4 +1,6 @@
 from .database_object import *
+# Internal
+from src.helper.interval import Interval, Unit
 
 
 class Session(DatabaseObject):
@@ -6,21 +8,21 @@ class Session(DatabaseObject):
     def __init__(self):
         super().__init__()
 
-        self.startUtcTime: str = None
-        self.stopUtcTime: str = None
+        self.interval: Interval = None
 
 
     def __eq__(self, other):
 
-        return all((self.startUtcTime == other.startUtcTime,
-                    self.stopUtcTime == other.stopUtcTime))
+        return self.interval == other.interval
 
 
     def toDict(self):
 
+        utcInterval = self.interval.transformTo(Unit.Nanoseconds)
+
         return \
         {
             'primaryKey': self.primaryKey,
-            'startUtcTime': self.startUtcTime,
-            'stopUtcTime': self.stopUtcTime
+            'startUtcTime': utcInterval.transformTo(Unit.Utc).start.value,
+            'stopUtcTime': utcInterval.stop.value
         }

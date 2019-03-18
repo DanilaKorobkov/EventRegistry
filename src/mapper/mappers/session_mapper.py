@@ -1,9 +1,9 @@
 from .mapper import *
 # Internal
+from src.helper.interval import Interval
 from src.common.decorators import override
-from src.helper.interval import Unit, Interval
 from src.domain.objects.session import Session
-from src.domain.converters.date_time_converter import DateTimeConverter
+from src.helper.time_point import TimePoint, Unit
 
 
 def findSessionWrapper(func):
@@ -31,18 +31,18 @@ class SessionMapper(Mapper):
 
 
     @findSessionWrapper
-    def findInsideTimestamp(self, *, interval: Interval, inclusive = False):
+    def findInsideTimestamp(self, includeIncompleteEntries, interval: Interval):
 
         interval = interval.transformTo(Unit.Second)
 
-        if inclusive:
+        if includeIncompleteEntries:
             dataSets = self.abstractFind('SELECT * FROM SessionView WHERE (StartSession >= ? and StartSession <= ?) '
                                          'or (EndSession >= ? and EndSession <= ?)',
-                                         (interval.start, interval.stop, interval.start, interval.stop))
+                                         (interval.start.value, interval.stop.value, interval.start.value, interval.stop.value))
 
         else:
             dataSets = self.abstractFind('SELECT * FROM SessionView WHERE StartSession >= ? and EndSession <= ?',
-                                         (interval.start, interval.stop))
+                                         (interval.start.value, interval.stop.value))
 
         return dataSets
 
@@ -58,8 +58,8 @@ class SessionMapper(Mapper):
         sessionStartInSeconds = next(iterator)
         sessionStopInSeconds = next(iterator)
 
-        session.startUtcTime = DateTimeConverter.translateSecondsSinceEpochToUtc(sessionStartInSeconds)
-        session.stopUtcTime = DateTimeConverter.translateSecondsSinceEpochToUtc(sessionStopInSeconds)
+        session.interval = Interval(TimePoint(sessionStartInSeconds, Unit.Second),
+                                    TimePoint(sessionStopInSeconds, Unit.Second))
 
         return session
 

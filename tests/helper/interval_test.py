@@ -1,33 +1,38 @@
-from src.helper.interval import Interval, Unit, WrongUnit
+from src.helper.interval import Interval
+# Internal
+from src.helper.time_point import TimePoint, Unit, WrongUnit
 # Python
 import pytest
+from copy import deepcopy
 
 
-def test_transformTo_Seconds():
+@pytest.fixture
+def MillisecondInterval():
 
-    millisecondsInterval = Interval(1, 2, Unit.Millisecond)
+    startPoint = TimePoint(1, Unit.Millisecond)
+    endPoint = TimePoint(2, Unit.Millisecond)
 
-    transformToMicrosecondInterval = millisecondsInterval.transformTo(Unit.Microsecond)
-
-    assert millisecondsInterval.start == 1
-    assert millisecondsInterval.stop == 2
-    assert millisecondsInterval.currentUnit == Unit.Millisecond
-
-    assert transformToMicrosecondInterval.start == 1000
-    assert transformToMicrosecondInterval.stop == 2000
-    assert transformToMicrosecondInterval.currentUnit == Unit.Microsecond
+    interval = Interval(startPoint, endPoint)
+    return interval
 
 
-def test_setAttribute_withUnknownUnit_raiseWrongUnit():
+def test_transformTo_Seconds(MillisecondInterval):
 
-    interval = Interval(1, 2, Unit.Second)
+    tmp = deepcopy(MillisecondInterval)
+
+    transformToMicrosecondInterval = MillisecondInterval.transformTo(Unit.Microsecond)
+
+    assert tmp.start == MillisecondInterval.start
+    assert tmp.stop == MillisecondInterval.stop
+
+    assert transformToMicrosecondInterval.start == TimePoint(1000, Unit.Microsecond)
+    assert transformToMicrosecondInterval.stop == TimePoint(2000, Unit.Microsecond)
+
+
+def test_setAttribute_withUnknownUnit_raiseWrongUnit(MillisecondInterval):
 
     with pytest.raises(NotImplementedError):
-        interval.start = 2
+        MillisecondInterval.start = 2
 
     with pytest.raises(NotImplementedError):
-        interval.stop = 2
-
-    with pytest.raises(NotImplementedError):
-        interval.currentUnit = Unit.Microsecond
-
+        MillisecondInterval.stop = 2

@@ -8,13 +8,17 @@ class IStorage:
         raise NotImplementedError
 
 
-    def findSessionsInsideTimestamp(self, parameters: dict):
+    def findSessionsInsideTimestamp(self, includeIncompleteEntries: bool, interval: Interval):
         raise NotImplementedError
 
 
-    def findAllPipes(self, includeRecords: bool):
+    def findAllPipes(self):
         raise NotImplementedError
 
 
-    def findPipesForSessions(self, sessionsId: list, includeRecords: bool, interval: Interval):
+    def findPipesForSessions(self, sessionsId: list):
         raise NotImplementedError
+
+
+    def findRecordsForPipe(self, pipeId: int, interval: Interval = None):
+        raise NotADirectoryError

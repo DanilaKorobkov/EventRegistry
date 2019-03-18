@@ -1,5 +1,6 @@
 from .database_object import *
 # Internal
+from src.helper.time_point import  TimePoint, Unit
 from src.domain.wrappers.i_package_wrapper import IPackageWrapper
 
 
@@ -9,14 +10,14 @@ class Record(DatabaseObject):
         super().__init__()
 
         self.pipeId: int = None
-        self.utcTime: str = None
+        self.timePoint: TimePoint = None
         self.package: IPackageWrapper = None
 
 
     def __eq__(self, other):
 
         return all((self.pipeId == other.pipeId,
-                    self.utcTime == other.utcTime,
+                    self.timePoint == other.timePoint,
                     self.package == other.package))
 
 
@@ -25,7 +26,7 @@ class Record(DatabaseObject):
         dictionary = \
         {
             'primaryKey': self.primaryKey,
-            'utcTime': self.utcTime,
+            'utcTime': self.timePoint.transformTo(Unit.Utc).value,
             'fields': self.package.toDict()
         }
 
