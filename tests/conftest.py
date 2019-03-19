@@ -1,10 +1,11 @@
 # Internal
 from tests.domain.mavlink.conftest import *
 from src.helper.request_wrapper import RequestWrapper
+from src.helper.interval import Interval, TimePoint, Unit
 # Python
 import pytest
 from asyncio import coroutine
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
 
 @pytest.fixture
@@ -20,25 +21,241 @@ def AsyncMock():
 
     return new
 
+@pytest.fixture(scope = 'module')
+def SecondInterval():
 
-@pytest.fixture
-def GetRequest():
-    return RequestWrapper({'type': 'get', 'data': {'what': 'Pipes', 'sessionsId': [], 'interval': {'startNanoseconds': 1, 'stopNanoseconds': 2}}})
+    return Interval(TimePoint(1, Unit.Second),
+                    TimePoint(2, Unit.Second))
+
+# Supported request:
+@pytest.fixture(scope = 'module')
+def _GetAllSessionsRequestData():
+    return RequestWrapper({'what': 'Sessions'})
+
+@pytest.fixture(scope = 'module')
+def GetAllSessionsRequest(_GetAllSessionsRequestData):
+    return RequestWrapper({'type': 'get',
+                           'data': _GetAllSessionsRequestData})
 
 
-@pytest.fixture
-def SetRequest():
-    return RequestWrapper({'type': 'set', 'data': {}})
+@pytest.fixture(scope = 'module')
+def _GetSessionsInIntervalRequestData():
+    return RequestWrapper({'what': 'Sessions',
+                           'includeIncompleteEntries': False,
+                           'interval': {'start': 1, 'stop': 2, 'unit': 'Second'}
+                           })
+
+@pytest.fixture(scope = 'module')
+def GetSessionsInIntervalRequest(_GetSessionsInIntervalRequestData):
+    return RequestWrapper({'type': 'get',
+                           'data': _GetSessionsInIntervalRequestData})
 
 
-@pytest.fixture
-def RequestWithWrongType():
-    return RequestWrapper({'type': 'Wrong', 'data': {}})
+@pytest.fixture(scope = 'module')
+def _GetAllPipesRequestData():
+    return RequestWrapper({'what': 'Pipes'})
+
+@pytest.fixture(scope = 'module')
+def GetAllPipesRequest(_GetAllPipesRequestData):
+    return RequestWrapper({'type': 'get',
+                           'data': _GetAllPipesRequestData})
 
 
+@pytest.fixture(scope = 'module')
+def _GetPipesForSessionsRequestData():
+    return RequestWrapper({'what': 'Pipes',
+                           'sessionsId': [1, 2]})
+
+@pytest.fixture(scope = 'module')
+def GetPipesForSessionsRequest(_GetPipesForSessionsRequestData):
+    return RequestWrapper({'type': 'get',
+                           'data': _GetPipesForSessionsRequestData})
+
+
+@pytest.fixture(scope = 'module')
+def _GetPipeRecordsRequestData():
+    return RequestWrapper({'what': 'Records', 'pipeId': 1})
+
+@pytest.fixture(scope = 'module')
+def GetPipeRecordsRequest(_GetPipeRecordsRequestData):
+    return RequestWrapper({'type': 'get',
+                           'data':_GetPipeRecordsRequestData})
+
+
+@pytest.fixture(scope = 'module')
+def _GetPipeRecordsInIntervalRequestData():
+    return RequestWrapper({'what': 'Records',
+                           'pipeId': 1,
+                           'interval': {'start': 1, 'stop': 2, 'unit': 'Second'}})
+
+@pytest.fixture(scope = 'module')
+def GetPipeRecordsInIntervalRequest(_GetPipeRecordsInIntervalRequestData):
+    return RequestWrapper({'type': 'get',
+                           'data': _GetPipeRecordsInIntervalRequestData})
+
+
+# Invalid Requests:
 @pytest.fixture
 def RequestWithWrongFields():
-    return RequestWrapper({'field1': 0, 'field2': 0})
+    return RequestWrapper({'field1': 0,
+                           'field2': 0})
+
+
+@pytest.fixture
+def _RequestWithWrongTypeData():
+    return {}
+
+@pytest.fixture
+def RequestWithWrongType(_RequestWithWrongTypeData):
+    return RequestWrapper({'type': 'Wrong',
+                           'data': _RequestWithWrongTypeData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithoutWhatData():
+    return {'field': 1}
+
+@pytest.fixture(scope = 'module')
+def RequestWithoutWhat(_RequestWithoutWhatData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithoutWhatData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidWhatData():
+    return {'what': 'SessionRecordPipe'}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidWhat(_RequestWithInvalidWhatData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidWhatData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidFieldData():
+    return {'what': 'SessionRecordPipe', 'field': 1}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidField(_RequestWithInvalidFieldData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidFieldData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidIncludeIncompleteEntriesTypeData():
+    return {'what': 'Sessions',
+            'includeIncompleteEntries': 2,
+            'interval': {'start': 1, 'stop': 2, 'unit': 'Second'}}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidIncludeIncompleteEntriesType(_RequestWithInvalidIncludeIncompleteEntriesTypeData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidIncludeIncompleteEntriesTypeData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidFieldInIntervalData():
+    return {'what': 'Sessions',
+            'includeIncompleteEntries': 2,
+            'interval': {'start': 1, 'stop': 2, 'unit': 'Second', 'field': 1}}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidFieldInInterval(_RequestWithInvalidFieldInIntervalData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidFieldInIntervalData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidIntervalStartTypeData():
+    return {'what': 'Sessions',
+            'includeIncompleteEntries': True,
+            'interval': {'start': 'str', 'stop': 2, 'unit': 'Second'}}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidIntervalStartType(_RequestWithInvalidIntervalStartTypeData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidIntervalStartTypeData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidIntervalStopTypeData():
+    return {'what': 'Sessions',
+            'includeIncompleteEntries': True,
+            'interval': {'start': 1, 'stop': 'str', 'unit': 'Second'}}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidIntervalStopType(_RequestWithInvalidIntervalStopTypeData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidIntervalStopTypeData})
+
+
+@pytest.fixture(scope = 'module')
+def _RequestWithInvalidIntervalUnitData():
+    return {'what': 'Sessions',
+            'includeIncompleteEntries': True,
+            'interval': {'start': 1, 'stop': 'str', 'unit': 'str'}}
+
+@pytest.fixture(scope = 'module')
+def RequestWithInvalidIntervalUnit(_RequestWithInvalidIntervalUnitData):
+    return RequestWrapper({'type': 'get',
+                           'data': _RequestWithInvalidIntervalUnitData})
+
+
+@pytest.fixture(scope = 'module')
+def _PipesForSessionsRequestWithInvalidSessionsIdTypeData():
+    return {'what': 'Pipes',
+            'sessionsId': 1}
+
+@pytest.fixture(scope = 'module')
+def PipesForSessionsRequestWithInvalidSessionsIdType(_PipesForSessionsRequestWithInvalidSessionsIdTypeData):
+    return RequestWrapper({'type': 'get',
+                           'data': _PipesForSessionsRequestWithInvalidSessionsIdTypeData})
+
+
+@pytest.fixture(scope = 'module')
+def _PipesForSessionsRequestWithInvalidFieldData():
+    return {'what': 'Pipes',
+            'field': 1}
+
+@pytest.fixture(scope = 'module')
+def PipesForSessionsRequestWithInvalidField(_PipesForSessionsRequestWithInvalidFieldData):
+    return RequestWrapper({'type': 'get',
+                           'data': _PipesForSessionsRequestWithInvalidFieldData})
+
+
+@pytest.fixture(scope = 'module')
+def _PipeRecordsRequestWithWrongFieldData():
+    return {'what': 'Records',
+            'field': 1}
+
+@pytest.fixture(scope = 'module')
+def PipeRecordsRequestWithWrongField(_PipeRecordsRequestWithWrongFieldData):
+    return RequestWrapper({'type': 'get',
+                           'data': _PipeRecordsRequestWithWrongFieldData})
+
+
+@pytest.fixture(scope = 'module')
+def _PipeRecordsRequestWithWrongPipeIdTypeData():
+    return {'what': 'Records',
+            'pipeId': [1]}
+
+@pytest.fixture(scope = 'module')
+def PipeRecordsRequestWithWrongPipeIdType(_PipeRecordsRequestWithWrongPipeIdTypeData):
+    return RequestWrapper({'type': 'get',
+                           'data': _PipeRecordsRequestWithWrongPipeIdTypeData})
+
+
+@pytest.fixture
+def StorageMock():
+
+    storage = MagicMock()
+
+    storage.findAllSessions = MagicMock()
+    storage.findRecordsForPipe = MagicMock()
+    storage.findPipesForSessions = MagicMock()
+    storage.findSessionsInsideTimestamp = MagicMock()
+
+    return storage
 
 
 @pytest.fixture(scope='session')

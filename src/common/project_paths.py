@@ -4,9 +4,12 @@ import os
 
 projectName = 'EventRegistry'
 
-executableScriptDir = os.path.abspath(os.curdir)
+currentFile = __file__
 
-pathToProject = executableScriptDir[: executableScriptDir.index(projectName) + len(projectName)]
+pathToProject = currentFile[: currentFile.index(projectName) + len(projectName)]
 
 pathToSrc = os.path.join(pathToProject, 'src')
+
+pathToConfig = '/var/pilotb/tmi'
 pathToRuntimeGeneratedDialects = os.path.join(pathToSrc, 'domain', 'mavlink', 'runtime_dialects')
+

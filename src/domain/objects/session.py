@@ -18,11 +18,11 @@ class Session(DatabaseObject):
 
     def toDict(self):
 
-        utcInterval = self.interval.transformTo(Unit.Nanoseconds)
+        utcInterval = self.interval.transformTo(Unit.Utc)
 
         return \
         {
             'primaryKey': self.primaryKey,
-            'startUtcTime': utcInterval.transformTo(Unit.Utc).start.value,
+            'startUtcTime': utcInterval.start.value,
             'stopUtcTime': utcInterval.stop.value
         }

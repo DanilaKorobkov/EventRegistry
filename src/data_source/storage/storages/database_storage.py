@@ -1,6 +1,7 @@
 from src.data_source.storage.storages.i_storage import *
 # Internal
-from src.common.decorators import override, singleton, private
+from src.common.settings import settings
+from src.common.decorators import override, singleton
 from src.mapper.registry.mapper_registry import MapperRegistry
 from src.mapper.mappers.pipe_mapper import Pipe, PipeMapper
 from src.mapper.mappers.record_mapper import Record, RecordMapper
@@ -15,7 +16,7 @@ class DatabaseStorage(IStorage):
     def __init__(self):
         super().__init__()
 
-        MapperRegistry().connection = sqlite3.connect('/tmp/pilotb_server')
+        MapperRegistry().connection = sqlite3.connect(settings.pathToDatabase)
         MapperRegistry().connection.text_factory = bytes
 
         MapperRegistry().setMapperFor(Pipe, PipeMapper)

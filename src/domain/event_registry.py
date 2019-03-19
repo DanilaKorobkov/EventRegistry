@@ -2,7 +2,8 @@
 from src.common.decorators import *
 from src.helper.request_wrapper import RequestWrapper
 from src.data_source.storage.storage_factory import StorageFactory
-from src.domain.request_handlers.i_request_handler import WrongRequest
+from src.common.exception import InvalidRequest, EventRegistryException
+from .request_handlers.support_request_checker import SupportedRequestChecker
 from src.domain.request_handlers.read_request_handler import ReadRequestHandler
 from src.domain.request_handlers.write_request_handler import WriteRequestHandler
 
@@ -29,17 +30,16 @@ class EventRegistry:
     def handleRequest(self, request: RequestWrapper):
 
         try:
-            if request.getAllParameters() == {'type', 'data'}:
+            if not SupportedRequestChecker.isSupported(request):
+                raise InvalidRequest(request)
 
-                requestType = request.get('type')
-                requestData = request.get('data')
+            requestType = request.get('type')
+            requestData = request.get('data')
 
-                if requestType in self.requestTypeHandlers:
+            if requestType in self.requestTypeHandlers:
 
-                    handler = self.requestTypeHandlers.get(requestType)
-                    return handler.handle(requestData)
+                handler = self.requestTypeHandlers.get(requestType)
+                return handler.handle(requestData)
 
-            raise WrongRequest
-
-        except WrongRequest:
-            raise WrongRequest(str(request))
+        except EventRegistryException as exception:
+            return exception.toDict()

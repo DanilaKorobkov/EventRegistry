@@ -27,7 +27,6 @@ class MapperRegistry:
             self.__connection = _connection
 
         else:
-
             import warnings
             warnings.warn('Connection will not change')
 

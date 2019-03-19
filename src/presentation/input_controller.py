@@ -1,4 +1,5 @@
 # Internal
+from src.common.settings import settings
 from src.domain.event_registry import EventRegistry
 from src.presentation.request_code.request_coder_factory import RequestCoderFactory
 # Python
@@ -8,7 +9,8 @@ import asyncio
 
 class InputController:
 
-    url = 'tcp://127.0.0.1:4567'
+    url = 'tcp://{ip}:{port}'.format(ip = settings.ip, 
+                                     port = settings.port)
 
     def __init__(self):
 

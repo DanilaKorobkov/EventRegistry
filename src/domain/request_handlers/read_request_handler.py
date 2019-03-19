@@ -10,18 +10,15 @@ class ReadRequestHandler(IRequestHandler):
 
     def handle(self, request: RequestWrapper):
 
-        if request.has('what'):
+        if request.get('what') == 'Pipes':
+            return self.handlePipesRequest(request)
 
-            if request.get('what') == 'Pipes':
-                return self.handlePipesRequest(request)
+        if request.get('what') == 'Sessions':
+            return self.handleSessionsRequest(request)
 
-            if request.get('what') == 'Sessions':
-                return self.handleSessionsRequest(request)
+        if request.get('what') == 'Records':
+            return self.handleRecordsRequest(request)
 
-            if request.get('what') == 'Records':
-                return self.handleRecordsRequest(request)
-
-        raise WrongRequest
 
 
     def handleSessionsRequest(self, request: RequestWrapper):
