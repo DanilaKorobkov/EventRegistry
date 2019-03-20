@@ -20,17 +20,13 @@ def test_EventRegistry_handleRequest_RequestWithWrongFields(RequestWithWrongFiel
 
     eventRegistry = EventRegistry()
 
-    result =  eventRegistry.handleRequest(RequestWithWrongFields)
-
-    assert result == {'error': {'exception': 'InvalidRequest',
-                                'description': "Received invalid request: {'field1': 0, 'field2': 0}"}}
+    with pytest.raises(InvalidRequest):
+        eventRegistry.handleRequest(RequestWithWrongFields)
 
 
 def test_EventRegistry_handleRequest_RequestWithWrongType(RequestWithWrongType):
 
     eventRegistry = EventRegistry()
 
-    result = eventRegistry.handleRequest(RequestWithWrongType)
-
-    assert result == {'error': {'exception': 'InvalidRequest',
-                                'description': "Received invalid request: {'type': 'Wrong', 'data': {}}"}}
+    with pytest.raises(InvalidRequest):
+        eventRegistry.handleRequest(RequestWithWrongType)

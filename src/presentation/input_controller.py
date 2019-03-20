@@ -3,8 +3,7 @@ from src.common.settings import settings
 from src.domain.event_registry import EventRegistry
 from src.presentation.request_code.request_coder_factory import RequestCoderFactory
 # Python
-import zmq.asyncio
-import asyncio
+import zmq
 
 
 class InputController:
@@ -19,8 +18,6 @@ class InputController:
         self.ctx = zmq.Context()
         self.socket = self.ctx.socket(zmq.REP)
 
-        self.session = None
-
 
     def start(self):
 
@@ -28,30 +25,37 @@ class InputController:
         self.startHandleIncomePackages()
 
 
-    async def stop(self):
-        asyncio.ensure_future(self.stopImpl())
-
-
-    async def stopImpl(self):
-
-        self.session.cancel()
-        self.session = None
-
-
     def startHandleIncomePackages(self):
 
         while True:
 
-            print()
-            requests = self.socket.recv_multipart()
-            print(requests)
-            requests = self.packageTransformer.decodeMultiple(requests)
-            print(requests[0].dictionary)
+            try:
+                self.__work()
 
-            replies = EventRegistry().handleRequests(requests)
-            print(replies)
-            replies = self.packageTransformer.encodeMultiple(replies)
-            print(replies)
-            self.socket.send_multipart(replies)
-            print()
-            # await asyncio.sleep(0)
+            except Exception as exception:
+                self.__handleException(exception)
+
+
+    def __work(self):
+
+        requests = self.socket.recv_multipart()
+        requests = self.packageTransformer.decodeMultiple(requests)
+
+        replies = EventRegistry().handleRequests(requests)
+        replies = self.packageTransformer.encodeMultiple(replies)
+
+        self.socket.send_multipart(replies)
+
+
+    def __handleException(self, exception: Exception):
+
+        reply = self.__wrapException(exception)
+        reply = self.packageTransformer.encodeSingle(reply)
+
+        self.socket.send_multipart([reply])
+
+
+    @staticmethod
+    def __wrapException(exception: Exception):
+
+        return {'error': {'exception': exception.__class__.__name__, 'description': str(exception)}}

@@ -29,17 +29,13 @@ class EventRegistry:
 
     def handleRequest(self, request: RequestWrapper):
 
-        try:
-            if not SupportedRequestChecker.isSupported(request):
-                raise InvalidRequest(request)
+        if not SupportedRequestChecker.isSupported(request):
+            raise InvalidRequest(request)
 
-            requestType = request.get('type')
-            requestData = request.get('data')
+        requestType = request.get('type')
+        requestData = request.get('data')
 
-            if requestType in self.requestTypeHandlers:
+        if requestType in self.requestTypeHandlers:
 
-                handler = self.requestTypeHandlers.get(requestType)
-                return handler.handle(requestData)
-
-        except EventRegistryException as exception:
-            return exception.toDict()
+            handler = self.requestTypeHandlers.get(requestType)
+            return handler.handle(requestData)
