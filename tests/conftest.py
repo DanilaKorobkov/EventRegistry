@@ -27,7 +27,7 @@ def SecondInterval():
     return Interval(TimePoint(1, Unit.Second),
                     TimePoint(2, Unit.Second))
 
-# Supported request:
+# Valid requests:
 @pytest.fixture(scope = 'module')
 def _GetAllSessionsRequestData():
     return RequestWrapper({'what': 'Sessions'})
@@ -94,7 +94,7 @@ def GetPipeRecordsInIntervalRequest(_GetPipeRecordsInIntervalRequestData):
                            'data': _GetPipeRecordsInIntervalRequestData})
 
 
-# Invalid Requests:
+# Invalid requests:
 @pytest.fixture
 def RequestWithWrongFields():
     return RequestWrapper({'field1': 0,

@@ -1,5 +1,6 @@
 # Python
 import os
+import tempfile
 
 
 projectName = 'EventRegistry'
@@ -11,5 +12,6 @@ pathToProject = currentFile[: currentFile.index(projectName) + len(projectName)]
 pathToSrc = os.path.join(pathToProject, 'src')
 
 pathToConfig = '/var/pilotb/tmi'
-pathToRuntimeGeneratedDialects = os.path.join(pathToSrc, 'domain', 'mavlink', 'runtime_dialects')
+
+pathToRuntimeGeneratedDialects = os.path.join(tempfile.gettempdir(), 'runtime_dialects')
 

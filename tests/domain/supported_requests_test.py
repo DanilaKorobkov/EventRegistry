@@ -1,103 +1,103 @@
-from src.domain.request_handlers.support_request_checker import SupportedRequestChecker
+from src.domain.request_handlers.request_validator import RequestValidator
 
 
 # Supported request:
 def test_1(RequestWithWrongType):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithWrongType)
+    assert not RequestValidator.isValid(RequestWithWrongType)
 
 
 def test_2(RequestWithWrongFields):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithWrongFields)
+    assert not RequestValidator.isValid(RequestWithWrongFields)
 
 
 def test_3(GetAllSessionsRequest):
 
-    assert SupportedRequestChecker.isSupported(GetAllSessionsRequest)
+    assert RequestValidator.isValid(GetAllSessionsRequest)
 
 
 def test_4(GetSessionsInIntervalRequest):
 
-    assert SupportedRequestChecker.isSupported(GetSessionsInIntervalRequest)
+    assert RequestValidator.isValid(GetSessionsInIntervalRequest)
 
 
 def test_5(GetAllPipesRequest):
 
-    assert SupportedRequestChecker.isSupported(GetAllPipesRequest)
+    assert RequestValidator.isValid(GetAllPipesRequest)
 
 
 def test_6(GetPipesForSessionsRequest):
 
-    assert SupportedRequestChecker.isSupported(GetPipesForSessionsRequest)
+    assert RequestValidator.isValid(GetPipesForSessionsRequest)
 
 
 def test_7(GetPipeRecordsRequest):
 
-    assert SupportedRequestChecker.isSupported(GetPipeRecordsRequest)
+    assert RequestValidator.isValid(GetPipeRecordsRequest)
 
 
 def test_8(GetPipeRecordsInIntervalRequest):
 
-    assert SupportedRequestChecker.isSupported(GetPipeRecordsInIntervalRequest)
+    assert RequestValidator.isValid(GetPipeRecordsInIntervalRequest)
 
 
 # Invalid requests:
 def test_9(RequestWithoutWhat):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithoutWhat)
+    assert not RequestValidator.isValid(RequestWithoutWhat)
 
 
 def test_10(RequestWithInvalidWhat):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidWhat)
+    assert not RequestValidator.isValid(RequestWithInvalidWhat)
 
 
 def test_11(RequestWithInvalidIncludeIncompleteEntriesType):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidIncludeIncompleteEntriesType)
+    assert not RequestValidator.isValid(RequestWithInvalidIncludeIncompleteEntriesType)
 
 
 def test_12(RequestWithInvalidIntervalStartType):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidIntervalStartType)
+    assert not RequestValidator.isValid(RequestWithInvalidIntervalStartType)
 
 
 def test_13(RequestWithInvalidIntervalStopType):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidIntervalStopType)
+    assert not RequestValidator.isValid(RequestWithInvalidIntervalStopType)
 
 
 def test_14(RequestWithInvalidIntervalUnit):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidIntervalUnit)
+    assert not RequestValidator.isValid(RequestWithInvalidIntervalUnit)
 
 
 def test_15(RequestWithInvalidField):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidField)
+    assert not RequestValidator.isValid(RequestWithInvalidField)
 
 
 def test_16(RequestWithInvalidFieldInInterval):
 
-    assert not SupportedRequestChecker.isSupported(RequestWithInvalidFieldInInterval)
+    assert not RequestValidator.isValid(RequestWithInvalidFieldInInterval)
 
 
 def test_17(PipesForSessionsRequestWithInvalidField):
 
-    assert not SupportedRequestChecker.isSupported(PipesForSessionsRequestWithInvalidField)
+    assert not RequestValidator.isValid(PipesForSessionsRequestWithInvalidField)
 
 
 def test_18(PipesForSessionsRequestWithInvalidSessionsIdType):
 
-    assert not SupportedRequestChecker.isSupported(PipesForSessionsRequestWithInvalidSessionsIdType)
+    assert not RequestValidator.isValid(PipesForSessionsRequestWithInvalidSessionsIdType)
 
 
 def test_19(PipeRecordsRequestWithWrongField):
 
-    assert not SupportedRequestChecker.isSupported(PipeRecordsRequestWithWrongField)
+    assert not RequestValidator.isValid(PipeRecordsRequestWithWrongField)
 
 
 def test_20(PipeRecordsRequestWithWrongPipeIdType):
 
-    assert not SupportedRequestChecker.isSupported(PipeRecordsRequestWithWrongPipeIdType)
+    assert not RequestValidator.isValid(PipeRecordsRequestWithWrongPipeIdType)

@@ -1,9 +1,9 @@
 # Internal
 from src.common.decorators import *
+from src.common.exception import InvalidRequest
 from src.helper.request_wrapper import RequestWrapper
+from .request_handlers.request_validator import RequestValidator
 from src.data_source.storage.storage_factory import StorageFactory
-from src.common.exception import InvalidRequest, EventRegistryException
-from .request_handlers.support_request_checker import SupportedRequestChecker
 from src.domain.request_handlers.read_request_handler import ReadRequestHandler
 from src.domain.request_handlers.write_request_handler import WriteRequestHandler
 
@@ -13,12 +13,12 @@ class EventRegistry:
 
     def __init__(self):
 
-        databaseStorage = StorageFactory.getStorage()
+        storage = StorageFactory.getStorage()
 
         self.requestTypeHandlers = \
         {
-            'get': ReadRequestHandler(databaseStorage),
-            'set': WriteRequestHandler(databaseStorage)
+            'get': ReadRequestHandler(storage),
+            'set': WriteRequestHandler(storage)
         }
 
 
@@ -29,7 +29,7 @@ class EventRegistry:
 
     def handleRequest(self, request: RequestWrapper):
 
-        if not SupportedRequestChecker.isSupported(request):
+        if not RequestValidator.isValid(request):
             raise InvalidRequest(request)
 
         requestType = request.get('type')

@@ -1,8 +1,10 @@
 # Internal
 from src.common.decorators import private, singleton
+from src.common.project_paths import pathToRuntimeGeneratedDialects
 from src.domain.wrappers.mavlink_package_wrapper import MavlinkPackageWrapper
 from src.domain.mavlink.mavlink_dialect_generator import MavlinkDialectGenerator
 # Python
+import sys
 import struct
 from pymavlink.generator.mavcrc import x25crc
 
@@ -33,13 +35,16 @@ class MavlinkPackageGenerator:
         fullPackage = self.wrapPayload(packageClass, payload)
 
         parse = dialectModule.MAVLink(None).parse_buffer
-
         package = parse(fullPackage)[0]
+
         return MavlinkPackageWrapper(package)
 
 
     @private
     def importDialectModule(self, dialect: str):
+
+        if pathToRuntimeGeneratedDialects not in sys.path:
+            sys.path.append(pathToRuntimeGeneratedDialects)
 
         module = __import__(dialect, globals(), locals(), ['object'], 0)
         return module

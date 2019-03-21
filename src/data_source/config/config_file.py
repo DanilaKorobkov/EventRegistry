@@ -13,7 +13,7 @@ class ConfigFile(ReadOnlyStore):
     def getParameters(self) -> dict:
 
         try:
-            with open(os.path.join(pathToConfig, 'config.yaml'), 'r') as config:
+            with open(os.path.join(pathToConfig, 'event_registry.conf'), 'r') as config:
 
                 data = yaml.load(config)
                 return data

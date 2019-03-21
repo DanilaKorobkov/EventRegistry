@@ -1,0 +1,15 @@
+[Unit]
+
+Description = EventRegistry Service
+
+
+[Service]
+
+Type = simple
+
+Restart = always
+
+Environment = "PYTHONPATH=/home/user/Data/pilotb/2ndparty/server/EventRegistry/"
+ExecStart = /usr/bin/python3 /home/user/Data/pilotb/2ndparty/server/EventRegistry/src/main.py
+
+

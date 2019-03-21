@@ -2,7 +2,7 @@
 from src.common.decorators import *
 from src.common.project_paths import pathToRuntimeGeneratedDialects
 # Python
-import os, time, tempfile
+import os, re, time, tempfile
 import pymavlink.generator.mavgen as mavlink
 
 
@@ -50,8 +50,7 @@ class MavlinkDialectGenerator:
     @private
     def translateTostringSuitableForImport(self, pathToDialect):
 
-        module = pathToDialect[pathToDialect.index('src'): -3]
-        module = module.replace('/', '.')
+        module = re.search(r'(\w*)(\.py)', pathToDialect).group(1)
         return module
 
 

@@ -1,4 +1,5 @@
 # Internal
+from src.common.project_paths import pathToRuntimeGeneratedDialects
 from src.domain.mavlink.mavlink_dialect_generator import MavlinkDialectGenerator
 # Python
 import pytest
@@ -21,6 +22,10 @@ def test_MavlinkDialectGenerator_generateUsing(DataSet):
     mavlinkDialectGenerator = MavlinkDialectGenerator()
 
     module = mavlinkDialectGenerator.generateUsing(DataSet['metaData'])
+
+    import sys
+
+    sys.path.append(pathToRuntimeGeneratedDialects)
     module =  __import__(module, globals(), locals(), ['object'], 0)
 
     id = next(iter(module.mavlink_map))

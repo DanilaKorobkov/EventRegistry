@@ -1,8 +1,8 @@
 # Internal
-from src.presentation.input_controller import InputController
+from src.presentation.application_controller import ApplicationController
 
 
 if __name__ == '__main__':
 
-    inputController = InputController()
-    inputController.start()
+    applicationController = ApplicationController()
+    applicationController.start()
