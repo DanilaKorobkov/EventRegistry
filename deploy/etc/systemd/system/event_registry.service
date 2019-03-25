@@ -1,0 +1,12 @@
+[Unit]
+Description = EventRegistry Service
+
+[Service]
+Type = simple
+Restart = always
+Environment = "PYTHONPATH=/opt/EventRegistry/:$PYTHONPATH"
+ExecStart = /var/pilotb/env/bin/python3 /opt/EventRegistry/src/main.py
+
+[Install]
+WantedBy=multi-user.target 
+

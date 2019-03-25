@@ -1,0 +1,7 @@
+Package: EventRegistry
+Version: 1.0.0
+Architecture: amd64
+Maintainer: Danila Korobkov <korobkov@elins.ru>
+Standards-Version: 4.0.0
+Pre-Depends: python3-pip
+Description: None

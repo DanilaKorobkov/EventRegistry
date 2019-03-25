@@ -1,0 +1,20 @@
+#! /bin/bash
+
+cd /tmp/system_requirements
+sudo pip3 install *
+
+cd /var
+sudo chown -R astra:astra pilotb
+cd ./pilotb
+virtualenv env
+source ./env/bin/activate
+
+cd /tmp/pre_requirements
+pip install *
+
+cd /tmp/mavlink
+pip install *
+
+deactivate
+
+sudo systemctl daemon-reload
